@@ -10,7 +10,7 @@
           <!-- Dashboard Card -->
           <article 
             class="bg-gray-50 rounded-lg border border-black p-6 hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
-            onclick="window.location.href='dashboard.html'"
+            onclick="openUserModal()"
             role="button"
             tabindex="0"
             aria-label="Dashboard - View analytics and statistics"
@@ -24,10 +24,10 @@
                 />
               </div>
               <h3 class="text-xl font-bold text-black mb-2">
-                Dashboard
+                Manage User
               </h3>
               <p class="text-gray-500 text-sm">
-                View analytics and performance statistics.
+                Add coaches, players or other admin staff.
               </p>
             </div>
           </article>
@@ -81,6 +81,69 @@
           </article>
         </div>
       </section>
+      
+      <!-- User Modal -->
+      <div id="userModal" class="hidden fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-lg p-8 relative">
+          <!-- Close Button -->
+          <button onclick="closeUserModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+            ✕
+          </button>
+
+          <h2 class="text-2xl font-bold mb-6 text-center">Add New User</h2>
+
+          <form method="POST" action="{{ route('users.store') }}">
+            @csrf
+            <!-- Username -->
+            <div class="mb-4">
+              <label class="block text-gray-700 font-medium mb-2">Username</label>
+              <input type="text" name="username" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-amber-200" />
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+              <label class="block text-gray-700 font-medium mb-2">Password</label>
+              <input type="password" name="password" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-amber-200" />
+            </div>
+
+            <!-- First Name -->
+            <div class="mb-4">
+              <label class="block text-gray-700 font-medium mb-2">First Name</label>
+              <input type="text" name="first_name" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-amber-200" />
+            </div>
+
+            <!-- Last Name -->
+            <div class="mb-4">
+              <label class="block text-gray-700 font-medium mb-2">Last Name</label>
+              <input type="text" name="last_name" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-amber-200" />
+            </div>
+
+            <!-- Role -->
+            <div class="mb-4">
+              <label class="block text-gray-700 font-medium mb-2">Role</label>
+              <select name="role_id" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-amber-200">
+                <option value="1">Admin</option>
+                <option value="2">Coach</option>
+                <option value="3">Team Captain</option>
+                <option value="4">Player</option>
+              </select>
+            </div>
+
+            <!-- Profile -->
+            <div class="mb-6">
+              <label class="block text-gray-700 font-medium mb-2">Profile</label>
+              <input type="file" name="profile" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring focus:ring-amber-200" />
+            </div>
+
+            <!-- Submit -->
+            <div class="flex justify-center">
+              <button type="submit" class="bg-amber-900 text-white px-6 py-2 rounded-lg hover:bg-amber-800 transition-colors">
+                Save User
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
 
       <!-- Coach Section -->
       <section class="mb-12">
@@ -238,4 +301,15 @@
           </article>
         </div>
       </section>
+
+
+<!-- User Modal -->
+<script>
+  function openUserModal() {
+    document.getElementById('userModal').classList.remove('hidden');
+  }
+  function closeUserModal() {
+    document.getElementById('userModal').classList.add('hidden');
+  }
+</script>
 @endsection

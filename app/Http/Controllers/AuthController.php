@@ -71,7 +71,7 @@ class AuthController extends Controller
             // Return a JSON response with success and redirect URL
             return response()->json([
                 'success' => true,
-                'redirect_url' => route('announcement')
+                'redirect_url' => route('dashboard')
             ]);
         }
 

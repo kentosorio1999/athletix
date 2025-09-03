@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Control Panel')
+@section('title', 'Dashboard')
 
 @section('content')
       <!-- Charts Section -->
@@ -52,7 +52,7 @@
             </div>
           </div>
           <h3 class="text-xl font-bold text-center mb-2">NOTIFICATION</h3>
-          <p class="text-3xl font-bold text-center">225</p>
+          <p class="text-3xl font-bold text-center">{{ $notificationsCount }}</p>
         </div>
 
         <!-- Performance Card -->
@@ -65,7 +65,7 @@
             </div>
           </div>
           <h3 class="text-xl font-bold text-center mb-2">PERFORMANCE</h3>
-          <p class="text-3xl font-bold text-center">90</p>
+          <p class="text-3xl font-bold text-center">{{ $performanceCount }}</p>
         </div>
 
         <!-- Events Card -->
@@ -78,7 +78,7 @@
             </div>
           </div>
           <h3 class="text-xl font-bold text-center mb-2">EVENTS</h3>
-          <p class="text-3xl font-bold text-center">90</p>
+          <p class="text-3xl font-bold text-center">{{ $eventsCount  }}</p>
         </div>
 
         <!-- Attendance Card -->
@@ -91,7 +91,7 @@
             </div>
           </div>
           <h3 class="text-xl font-bold text-center mb-2">ATTENDANCE</h3>
-          <p class="text-3xl font-bold text-center">10</p>
+          <p class="text-3xl font-bold text-center">{{ $attendanceCount  }}</p>
         </div>
       </div>
 
@@ -139,10 +139,10 @@
         labels: ['Athletes', 'Performance', 'Events', 'Attendance'],
         datasets: [{
           data: [
-              {{ $donutData['athletes'] }},
-              {{ $donutData['performance'] }},
-              {{ $donutData['events'] }},
-              {{ $donutData['attendance'] }}
+              {{ $barData['athletes'] }},
+              {{ $barData['performance'] }},
+              {{ $barData['events'] }},
+              {{ $barData['attendance'] }}
           ],
           backgroundColor: [
             '#10B981', // Green

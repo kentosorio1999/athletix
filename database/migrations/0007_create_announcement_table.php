@@ -13,15 +13,14 @@ return new class extends Migration
             $table->string('title');
             $table->text('details');
             $table->unsignedBigInteger('posted_by');
-            $table->timestamp('created_at')->useCurrent();
-            
+            $table->date('date');
+            $table->string('venue')->nullable();
+            $table->timestamps(); // adds both created_at and updated_at automatically
+
             $table->foreign('posted_by')
-                  ->references('user_id')
-                  ->on('users')
-                  ->onDelete('cascade');
-                  
-            $table->index('created_at');
-            $table->index(['posted_by', 'created_at']);
+                ->references('user_id')
+                ->on('users')
+                ->onDelete('cascade');
         });
     }
 

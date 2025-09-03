@@ -186,7 +186,7 @@
         // Get form data
         let formData = new FormData(this);
 
-        fetch("{{ route('login') }}", {
+        fetch("{{ route('login.attempt') }}", {
             method: 'POST',
             body: formData,
             headers: {

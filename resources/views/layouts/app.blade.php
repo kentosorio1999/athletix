@@ -11,11 +11,12 @@
     <div class="flex">
         {{-- Navbar (reusable partial) --}}
         @include('partials.navbar')
-        <main class="flex-1 p-8 bg-white grid justify-items-center min-h-screen w-screen">
-          <header class="flex justify-between items-center mb-8">
+        <main class="flex-1 p-8 bg-white grid justify-items-between min-h-screen w-screen">
+          <header class="flex justify-between items-start mb-8">
             <h1 class="text-4xl font-bold text-brown-primary font-inknut">
               @yield('title')
             </h1>
+            @yield('header-actions')
             <!-- <a href="index.html" class="text-brown-primary hover:underline">
               ← Back to Control Panel
             </a> -->
