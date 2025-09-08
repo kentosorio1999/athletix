@@ -13,15 +13,13 @@ return new class extends Migration
     {
         Schema::create('otps', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id'); // must match users.user_id
+            $table->unsignedBigInteger('user_id');
             $table->string('otp');
             $table->timestamp('expires_at');
             $table->timestamps();
 
-            $table->foreign('user_id')
-                ->references('user_id') // ✅ use user_id instead of id
-                ->on('users')
-                ->onDelete('cascade');
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
+            $table->index('user_id');
         });
     }
 

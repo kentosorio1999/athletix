@@ -2,23 +2,36 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Announcement extends Model
 {
-    protected $primaryKey = 'announcement_id';
+    use HasFactory;
 
+    protected $primaryKey = 'announcement_id';
     protected $fillable = [
         'title',
-        'details',
-        'venue',
-        'date',
+        'message',
         'posted_by',
+        'target',
+        'sport_id',
+        'section_id',
+        'removed'
     ];
 
-    // ✅ Add this relationship
-    public function user()
+    public function poster()
     {
-        return $this->belongsTo(User::class, 'posted_by', 'user_id');
+        return $this->belongsTo(User::class, 'posted_by');
+    }
+
+    public function sport()
+    {
+        return $this->belongsTo(Sport::class, 'sport_id');
+    }
+
+    public function section()
+    {
+        return $this->belongsTo(Section::class, 'section_id');
     }
 }

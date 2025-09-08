@@ -11,8 +11,8 @@
     <div class="flex">
         {{-- Navbar (reusable partial) --}}
         @include('partials.navbar')
-        <main class="flex-1 p-8 bg-white grid justify-items-between min-h-screen w-screen">
-          <header class="flex justify-between items-start mb-8">
+        <main class="flex-1 p-8 bg-white justify-items-between min-h-screen w-screen">
+          <header class="flex justify-between items-start mb-1">
             <h1 class="text-4xl font-bold text-brown-primary font-inknut">
               @yield('title')
             </h1>

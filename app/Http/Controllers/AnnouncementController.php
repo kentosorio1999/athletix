@@ -2,41 +2,50 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Announcement;
 use Illuminate\Http\Request;
+use App\Models\Announcement;
 use Illuminate\Support\Facades\Auth;
 
 class AnnouncementController extends Controller
 {
-    // Show all announcements
+    /**
+     * Display a listing of announcements.
+     */
     public function index()
     {
-        $announcements = Announcement::with('user')
+        // Fetch only announcements that are not removed
+        $announcements = Announcement::where('removed', 0)
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('announcements', compact('announcements'));
     }
 
-    // Store new announcement
+    /**
+     * Store a newly created announcement.
+     */
     public function store(Request $request)
     {
-        $request->validate([
+        // Validate input
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'details' => 'required|string',
-            'venue' => 'nullable|string|max:255',
-            'date' => 'required|date',
+            'message' => 'required|string',
+            'target' => 'required|in:All,Athletes,Coaches,Staff',
+            'sport_id' => 'nullable|exists:sports,id',
+            'section_id' => 'nullable|exists:sections,id',
         ]);
 
+        // Create announcement
         Announcement::create([
-            'title' => $request->title,
-            'details' => $request->details,
-            'venue' => $request->venue,
-            'date' => $request->date,
-            'posted_by' => auth()->id(), // assuming user is logged in
+            'title' => $validated['title'],
+            'message' => $validated['message'],
+            'target' => $validated['target'],
+            'sport_id' => $validated['sport_id'] ?? null,
+            'section_id' => $validated['section_id'] ?? null,
+            'posted_by' => Auth::id(), // current logged-in user
+            'removed' => 0,
         ]);
 
-        return redirect()->route('announcements.index')->with('success', 'Announcement added successfully.');
+        return redirect()->route('announcements')->with('success', 'Announcement added successfully.');
     }
-
 }

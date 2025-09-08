@@ -3,29 +3,48 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable; 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable, HasFactory; // 👈 add HasFactory here
+    use HasFactory, Notifiable;
 
-    protected $table = 'users';   // name of your table
-    protected $primaryKey = 'user_id'; // primary key column
-    public $timestamps = false;   // since you only have created_at (no updated_at)
-
+    protected $primaryKey = 'user_id';
     protected $fillable = [
         'username',
         'password',
-        'first_name',
-        'last_name',
-        'role_id',
-        'profile_image',
-        'status',
+        'role',
+        'removed',
     ];
 
     protected $hidden = [
         'password',
     ];
+
+    public function staff()
+    {
+        return $this->hasOne(Staff::class, 'user_id');
+    }
+
+    public function coach()
+    {
+        return $this->hasOne(Coach::class, 'user_id');
+    }
+
+    public function athlete()
+    {
+        return $this->hasOne(Athlete::class, 'user_id');
+    }
+
+    public function announcements()
+    {
+        return $this->hasMany(Announcement::class, 'posted_by');
+    }
+
+    public function otps()
+    {
+        return $this->hasMany(Otp::class, 'user_id');
+    }
+
 }

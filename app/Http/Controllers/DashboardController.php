@@ -3,45 +3,33 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Announcement;
+use App\Models\Athlete;
+use App\Models\Event;
+use App\Models\Attendance;
+use App\Models\Performance;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Run one query to get all counts
-        $counts = DB::selectOne("
-            SELECT 
-                (SELECT COUNT(*) FROM notifications) AS notificationsCount,
-                (SELECT COUNT(*) FROM performances) AS performanceCount,
-                (SELECT COUNT(*) FROM events) AS eventsCount,
-                (SELECT COUNT(*) FROM participations WHERE attendance = 1) AS attendanceCount,
-                (SELECT COUNT(*) FROM athletes WHERE status = 'active') AS athletesCount
-        ");
+        // Metric counts
+        $notificationsCount = Announcement::where('removed', 0)->count();
+        $performanceCount = Performance::where('removed', 0)->count();
+        $eventsCount = Event::where('removed', 0)->count();
+        $attendanceCount = Attendance::where('removed', 0)->count();
 
-        // Extract values
-        $notificationsCount = $counts->notificationsCount;
-        $performanceCount   = $counts->performanceCount;
-        $eventsCount        = $counts->eventsCount;
-        $attendanceCount    = $counts->attendanceCount;
-        $athletesCount      = $counts->athletesCount;
-
-        // Chart Data (Donut + Bar)
+        // Donut / Bar chart data
         $donutData = [
-            'athletes'     => $athletesCount,
-            'performance'  => $performanceCount,
-            'events'       => $eventsCount,
-            'attendance'   => $attendanceCount,
+            'athletes' => Athlete::where('removed', 0)->count(),
+            'performance' => Performance::where('removed', 0)->count(),
+            'events' => Event::where('removed', 0)->count(),
+            'attendance' => Attendance::where('removed', 0)->count(),
         ];
 
-        $barData = [
-            'athletes'     => $athletesCount * 0.8, // Example scaling
-            'performance'  => $performanceCount * 1.2,
-            'events'       => $eventsCount,
-            'attendance'   => $attendanceCount,
-        ];
+        $barData = $donutData; // You can customize differently if needed
 
-        return view('athlete.dashboard', compact(
+        return view('dashboard', compact(
             'notificationsCount',
             'performanceCount',
             'eventsCount',

@@ -30,11 +30,11 @@
 
     <!-- Announcements -->
     <div class="relative group">
-      <a href="{{ route('announcements.index') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
+      <a href="{{ route('announcements') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
           <path d="M4 10v4c0 1.1.9 2 2 2h2l4 5V5L8 9H6c-1.1 0-2 .9-2 2zm10-5v14l7-5V10l-7-5z"/>
         </svg>
-        @if (request()->routeIs('announcements.index'))
+        @if (request()->routeIs('announcements'))
           <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
         @endif
       </a>
@@ -43,11 +43,11 @@
 
     <!-- Control Panel -->
     <div class="relative group">
-      <a href="{{ route('control') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
+      <a href="{{ route('control.panel') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
         </svg>
-        @if (request()->routeIs('control'))
+        @if (request()->routeIs('control.panel'))
           <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
         @endif
       </a>
