@@ -9,15 +9,16 @@ class Attendance extends Model
 {
     use HasFactory;
 
-    protected $table = 'attendance'; // add this
+    protected $table = 'attendance'; // table name explicitly
     protected $primaryKey = 'attendance_id';
     protected $fillable = [
         'athlete_id',
         'event_id',
         'status',
-        'removed'
+        'removed',
     ];
 
+    // Relationships
     public function athlete()
     {
         return $this->belongsTo(Athlete::class, 'athlete_id');
@@ -27,10 +28,4 @@ class Attendance extends Model
     {
         return $this->belongsTo(Event::class, 'event_id');
     }
-
-    public function teams()
-    {
-        return $this->belongsToMany(Team::class, 'athlete_team', 'athlete_id', 'team_id')->withTimestamps();
-    }
-
 }

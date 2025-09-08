@@ -8,17 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Performance extends Model
 {
     use HasFactory;
-
-    protected $table = 'performance'; // add this
+    protected $table = 'performance';
     protected $primaryKey = 'performance_id';
     protected $fillable = [
         'athlete_id',
         'event_id',
         'score',
         'remarks',
-        'removed'
+        'removed',
     ];
 
+    // Relationships
     public function athlete()
     {
         return $this->belongsTo(Athlete::class, 'athlete_id');

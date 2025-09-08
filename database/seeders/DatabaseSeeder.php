@@ -15,5 +15,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CTUSeeder::class,
         ]);
+        $this->call([
+            AwardSeeder::class,
+        ]);
     }
 }

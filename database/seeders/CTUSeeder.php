@@ -172,6 +172,7 @@ class CTUSeeder extends Seeder
                 'section_id' => $a['section_id'],
                 'sport_id' => $a['sport_id'],
                 'status' => 'pending',
+                'school_id'  => '2025' . rand(10000, 99999),
                 'removed' => 0,
                 'created_at' => now(),
                 'updated_at' => now(),

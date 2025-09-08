@@ -10,7 +10,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ControlPanelController;
 use App\Http\Controllers\EventController;
-// use App\Http\Controllers\SystemSettingsController;
+use App\Http\Controllers\SecurityController;
+use App\Http\Controllers\PerformanceController;
+use App\Http\Controllers\AttendanceController;
+
 
 
 // ✅ Login page (GET)
@@ -87,7 +90,43 @@ Route::middleware(['auth'])->group(function () {
 
     // Database
     Route::get('/control-panel/backup', [ControlPanelController::class, 'backupDatabase'])->name('control-panel.backupDatabase');
-    // Route::get('/system-settings/audit-logs', [SystemSettingsController::class, 'auditLogs'])->name('system.auditLogs');
+    
+
+    // security protocol
+    Route::prefix('security')->middleware('auth')->group(function() {
+        Route::get('/', [SecurityController::class, 'index'])->name('security.index');
+        Route::post('/force-reset/{user}', [SecurityController::class, 'forceReset'])->name('security.forceReset');
+        Route::post('/deactivate/{user}', [SecurityController::class, 'deactivateUser'])->name('security.deactivateUser');
+        Route::post('/activate/{user}', [SecurityController::class, 'activateUser'])->name('security.activateUser');
+        Route::get('/download-logs', [SecurityController::class, 'downloadLogs'])->name('security.downloadLogs');
+    });
+
+    // performance
+    Route::prefix('performance')->middleware('auth')->group(function() {
+        Route::get('/', [PerformanceController::class, 'index'])->name('performance.index'); // <- this is the correct name
+        Route::get('/create', [PerformanceController::class, 'create'])->name('performance.create');
+        Route::post('/store', [PerformanceController::class, 'store'])->name('performance.store');
+        Route::get('/edit/{performance}', [PerformanceController::class, 'edit'])->name('performance.edit');
+        Route::post('/update/{performance}', [PerformanceController::class, 'update'])->name('performance.update');
+        Route::post('/delete/{performance}', [PerformanceController::class, 'destroy'])->name('performance.destroy');
+    });
+
+
+    // attendance
+    Route::prefix('attendance')->middleware('auth')->group(function() {
+        Route::get('/', [AttendanceController::class, 'index'])->name('attendance');
+        Route::get('/create', [AttendanceController::class, 'create'])->name('attendance.create');
+        Route::post('/store', [AttendanceController::class, 'store'])->name('attendance.store');
+        Route::get('/edit/{attendance}', [AttendanceController::class, 'edit'])->name('attendance.edit');
+        Route::post('/update/{attendance}', [AttendanceController::class, 'update'])->name('attendance.update');
+        Route::post('/delete/{attendance}', [AttendanceController::class, 'destroy'])->name('attendance.destroy');
+    });
+
+    //reports
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+    Route::get('/reports/export/{format}', [ReportController::class, 'export'])->name('reports.export');
+
+
 
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');     // list users
@@ -96,13 +135,13 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class)->only(['store', 'update', 'destroy']);
     // Route::get('/control', [UserController::class,'controlPanel'])->name('control');
 
-    Route::get('/performance', fn() => view('performance'))->name('performance');
+    //Route::get('/performance', fn() => view('performance'))->name('performance');
     // Route::get('/events', fn() => view('events'))->name('events');
-    Route::get('/attendance', fn() => view('attendance'))->name('attendance');
-    Route::get('/reports', fn() => view('reports'))->name('reports');
+    //Route::get('/attendance', fn() => view('attendance'))->name('attendance');
+   // Route::get('/reports', fn() => view('reports'))->name('reports');
     Route::get('/messages', fn() => view('messages'))->name('messages');
     Route::get('/schedule', fn() => view('schedule'))->name('schedule');
     Route::get('/notifications', fn() => view('notifications'))->name('notifications');
     Route::get('/settings', fn() => view('settings'))->name('settings');
-    Route::get('/reports/export', [ReportController::class, 'export'])->name('reports.export');
+
 });

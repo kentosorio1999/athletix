@@ -1,41 +1,40 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\Athlete;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Sport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\AthleteExport;
 
 class ReportController extends Controller
 {
-    public function export($type)
+    public function index(Request $request)
     {
-        $users = User::with('athlete')->where('removed',0)->get();
+        $query = Athlete::with(['sport', 'awards']);
 
-        if($type == 'csv') {
-            $filename = 'users_report_'.date('Ymd_His').'.csv';
-            $handle = fopen(storage_path("app/public/$filename"), 'w');
-            fputcsv($handle, ['ID','Username','Role','Name','Status']);
-            foreach($users as $user){
-                fputcsv($handle, [
-                    $user->user_id,
-                    $user->username,
-                    $user->role,
-                    $user->athlete?->full_name ?? 'N/A',
-                    $user->removed==0?'Active':'Inactive'
-                ]);
-            }
-            fclose($handle);
-            return response()->download(storage_path("app/public/$filename"));
+        if ($request->filled('year')) {
+            $query->whereYear('created_at', $request->year);
         }
 
-        if($type == 'pdf'){
-            // For simplicity, return a placeholder
-            return response('PDF export is not implemented yet.');
+        if ($request->filled('sport')) {
+            $query->where('sport_id', $request->sport);
         }
 
-        abort(404);
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $athletes = $query->latest()->get();
+        $sports = Sport::all();
+
+        return view('reports.index', compact('athletes', 'sports'));
+    }
+
+    public function export(Request $request, $format)
+    {
+        $filename = 'ched_report_' . now()->format('Y_m_d_His') . '.' . $format;
+        return Excel::download(new AthleteExport($request), $filename);
     }
 }

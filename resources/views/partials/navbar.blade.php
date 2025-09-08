@@ -54,17 +54,36 @@
       <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Control Panel</span>
     </div>
 
-    <!-- Performance -->
+    <!-- System / Security Protocols -->
     <div class="relative group">
-      <a href="{{ route('performance') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
+      <a href="{{ route('security.index') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+          <!-- A shield icon -->
+          <path d="M12 2L4 5v6c0 5 4 9 8 11 4-2 8-6 8-11V5l-8-3z"/>
         </svg>
-        @if (request()->routeIs('performance'))
+        @if (request()->routeIs('security.index'))
           <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
         @endif
       </a>
-      <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Performance</span>
+      <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+        Security Protocols
+      </span>
+    </div>
+
+    <!-- Performance -->
+    <div class="relative group">
+        <a href="{{ route('performance.index') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/>
+            </svg>
+            @if (request()->routeIs('performance.index'))
+                <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
+            @endif
+        </a>
+        <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap 
+                    bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+            Performance
+        </span>
     </div>
 
     <!-- Events -->
@@ -81,18 +100,17 @@
     </div>
 
     <!-- Attendance -->
-    <div class="relative group">
-      <a href="{{ route('attendance') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="m9 12 2 2 4-4"/>
-        </svg>
-        @if (request()->routeIs('attendance'))
-          <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
-        @endif
-      </a>
-      <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Attendance</span>
-    </div>
+  <div class="relative group">
+    <a href="{{ route('attendance') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+      </svg>
+      @if (request()->routeIs('attendance'))
+        <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
+      @endif
+    </a>
+    <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Attendance</span>
+  </div>
 
     <!-- Reports -->
     <div class="relative group">
@@ -118,22 +136,6 @@
         @endif
       </a>
       <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Messages</span>
-    </div>
-
-    <!-- Schedule -->
-    <div class="relative group">
-      <a href="{{ route('schedule') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-          <line x1="16" y1="2" x2="16" y2="6"/>
-          <line x1="8" y1="2" x2="8" y2="6"/>
-          <line x1="3" y1="10" x2="21" y2="10"/>
-        </svg>
-        @if (request()->routeIs('schedule'))
-          <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
-        @endif
-      </a>
-      <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Schedule</span>
     </div>
 
     <!-- Notifications -->

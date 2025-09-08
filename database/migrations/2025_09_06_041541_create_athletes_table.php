@@ -22,6 +22,8 @@ return new class extends Migration
             $table->unsignedBigInteger('sport_id');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->enum('status', ['pending', 'in review','approved','reject'])->default('pending');
+            $table->enum('conditions', ['active', 'injured','graduate'])->default('active');
+            $table->string('school_id');
             $table->integer('removed')->default(0)->index();
             $table->timestamps();
 

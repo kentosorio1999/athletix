@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Team;
 use App\Models\AuditLog;
 
-class ControlPanelController extends Controller
+class SystemSettingsController extends Controller
 {
     public function index()
     {

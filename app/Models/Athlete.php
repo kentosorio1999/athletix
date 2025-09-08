@@ -45,4 +45,10 @@ class Athlete extends Model
     {
         return $this->hasMany(Performance::class, 'athlete_id');
     }
+
+    public function awards()
+    {
+        // Explicitly specify the foreign key name if it’s not the default
+        return $this->hasMany(Award::class, 'athlete_id');
+    }
 }
