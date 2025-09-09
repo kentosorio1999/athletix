@@ -13,6 +13,8 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\SecurityController;
 use App\Http\Controllers\PerformanceController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\StaffProfileController;
 
 
 
@@ -86,8 +88,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/events/{id}/update', [EventController::class, 'updateEvent'])->name('events.updateEvent');
     Route::delete('/events/{id}', [EventController::class, 'deleteEvent'])->name('events.deleteEvent');
 
-
-
     // Database
     Route::get('/control-panel/backup', [ControlPanelController::class, 'backupDatabase'])->name('control-panel.backupDatabase');
     
@@ -124,9 +124,21 @@ Route::middleware(['auth'])->group(function () {
 
     //reports
     Route::get('/reports', [ReportController::class, 'index'])->name('reports');
-    Route::get('/reports/export/{format}', [ReportController::class, 'export'])->name('reports.export');
+    Route::get('/reports/export/{format}', [App\Http\Controllers\ReportController::class, 'export'])->name('reports.export');
+    Route::get('/reports/export-pdf', [ReportController::class, 'exportPDF'])->name('reports.exportPDF');
 
 
+    //notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications', [NotificationController::class, 'store'])->name('notifications.store');
+    // Route::middleware(['auth', 'role:SuperAdmin'])->group(function() {
+    // });
+
+    Route::middleware(['auth', 'role:Staff'])->group(function () {
+        Route::get('/staff/profile', [StaffProfileController::class, 'edit'])->name('staff.profile.edit');
+        Route::post('/staff/profile', [StaffProfileController::class, 'update'])->name('staff.profile.update');
+    });
 
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');     // list users
@@ -141,7 +153,7 @@ Route::middleware(['auth'])->group(function () {
    // Route::get('/reports', fn() => view('reports'))->name('reports');
     Route::get('/messages', fn() => view('messages'))->name('messages');
     Route::get('/schedule', fn() => view('schedule'))->name('schedule');
-    Route::get('/notifications', fn() => view('notifications'))->name('notifications');
+    //Route::get('/notifications', fn() => view('notifications'))->name('notifications');
     Route::get('/settings', fn() => view('settings'))->name('settings');
 
 });

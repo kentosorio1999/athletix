@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="bg-white p-6 rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold mb-4">CHED Reports</h2>
+    <h2 class="text-2xl font-bold mb-4">Generate Reports</h2>
 
     <!-- Filters -->
     <form method="GET" action="{{ route('reports') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -25,9 +25,13 @@
     </form>
 
     <!-- Export Buttons -->
-    <div class="mb-4 flex gap-2">
-        <a href="{{ route('reports.export', 'xlsx') }}?{{ http_build_query(request()->all()) }}" class="bg-green-600 text-white px-3 py-2 rounded">Export Excel</a>
+    <!-- <div class="mb-4 flex gap-2">
         <a href="{{ route('reports.export', 'csv') }}?{{ http_build_query(request()->all()) }}" class="bg-yellow-600 text-white px-3 py-2 rounded">Export CSV</a>
+    </div> -->
+
+    <div class="mb-4 flex gap-2">
+        <a href="{{ route('reports.export', 'csv') }}?{{ http_build_query(request()->all()) }}" class="bg-yellow-600 text-white px-3 py-2 rounded">Export CSV</a>
+        <a href="{{ route('reports.export', 'pdf') }}?{{ http_build_query(request()->all()) }}" class="bg-red-600 text-white px-3 py-2 rounded">Export PDF</a>
     </div>
 
     <!-- Table -->

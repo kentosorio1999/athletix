@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Notification;
 
 class CTUSeeder extends Seeder
 {
@@ -308,6 +309,46 @@ class CTUSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
+        }
+
+        // =========================
+        // Notifications (sample)
+        // =========================
+
+        $notifications = [
+            [
+                'title' => 'Failed Login Attempt',
+                'message' => 'A failed login attempt was detected for username: user1@example.com',
+                'type' => 'warning',
+                'user_id' => 1, // null = system-wide notification
+                'read' => false,
+            ],
+            [
+                'title' => 'New Athlete Added',
+                'message' => 'Athlete John Doe was added to the Basketball team.',
+                'type' => 'info',
+                'user_id' => 1,
+                'read' => false,
+            ],
+            [
+                'title' => 'Upcoming CHED Report Deadline',
+                'message' => 'The deadline to submit the September 2025 report is in 3 days.',
+                'type' => 'warning',
+                'user_id' => 1,
+                'read' => false,
+            ],
+            [
+                'title' => 'Feedback Received',
+                'message' => 'A new feedback has been submitted by the sports department.',
+                'type' => 'info',
+                'user_id' => 1,
+                'read' => false,
+            ],
+        ];
+
+        
+        foreach ($notifications as $data) {
+            Notification::create($data); // ✅ singular
         }
     }
 }

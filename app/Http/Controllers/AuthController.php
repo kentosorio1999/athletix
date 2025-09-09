@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
+use App\Models\Notification;
 
 class AuthController extends Controller
 {
@@ -16,8 +17,8 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'username' => 'required|email|unique:users,username', // username IS the email
-            'password' => 'required|string|min:6|confirmed', // 👈 make sure you also have password_confirmation field
+            'username' => 'required|email|unique:users,username',
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
         // 1. Save the new user
@@ -26,7 +27,10 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // 2. Generate OTP (6 digits)
+        // Notify Super Admins
+        $this->notifySuperAdmins('New User Registered', "A new user registered: {$user->username}");
+
+        // 2. Generate OTP
         $otp = rand(100000, 999999);
 
         // 3. Store OTP
@@ -49,33 +53,28 @@ class AuthController extends Controller
         ]);
     }
 
-
-
     // Login user
     public function login(Request $request)
     {
-        // Validate the inputs
         $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        // Find the user by the username
         $user = User::where('username', $request->username)->first();
 
-        // Check if user exists and password is correct
         if ($user && Hash::check($request->password, $user->password)) {
-            // Log the user in
             Auth::login($user);
 
-            // Return a JSON response with success and redirect URL
             return response()->json([
                 'success' => true,
                 'redirect_url' => route('dashboard')
             ]);
         }
 
-        // If the login fails, return validation errors
+        // Failed login notification
+        $this->notifySuperAdmins('Failed Login Attempt', "Failed login attempt with username: {$request->username}", 'warning');
+
         return response()->json([
             'success' => false,
             'errors' => [
@@ -84,6 +83,7 @@ class AuthController extends Controller
         ]);
     }
 
+    // Verify OTP
     public function verifyOtp(Request $request)
     {
         $request->validate([
@@ -104,25 +104,26 @@ class AuthController extends Controller
             ]);
         }
 
-        // ✅ Mark user as active
         DB::table('users')->where('user_id', $request->user_id)->update(['status' => 'active']);
-
-        // ✅ Delete OTP after use
         DB::table('otps')->where('user_id', $request->user_id)->delete();
+
+        // OTP verified notification
+        $this->notifySuperAdmins('OTP Verified', "User ID {$request->user_id} has successfully verified their OTP.");
 
         return response()->json([
             'success' => true,
             'message' => 'OTP verified successfully!',
-            'redirect_url' => route('dashboard') // 👈 change this to your landing page
+            'redirect_url' => route('dashboard')
         ]);
     }
 
+    // Show OTP page
     public function showOtpPage($user_id)
     {
-        // Pass the user_id to the view so you can include it in the form
         return view('auth.verify-otp', compact('user_id'));
     }
 
+    // Resend OTP
     public function resendOtp(Request $request)
     {
         $user = User::find($request->user_id);
@@ -131,10 +132,8 @@ class AuthController extends Controller
             return response()->json(['success' => false, 'message' => 'User not found']);
         }
 
-        // Generate new OTP
         $otp = rand(100000, 999999);
 
-        // Upsert OTP in the otps table
         DB::table('otps')->updateOrInsert(
             ['user_id' => $user->user_id],
             [
@@ -145,8 +144,10 @@ class AuthController extends Controller
             ]
         );
 
-        // Send OTP via email
         Mail::to($user->username)->send(new OtpMail($otp));
+
+        // OTP resend notification
+        $this->notifySuperAdmins('OTP Resent', "A new OTP has been sent to user: {$user->username}");
 
         return response()->json([
             'success' => true,
@@ -154,5 +155,18 @@ class AuthController extends Controller
         ]);
     }
 
+    // Helper function to notify all Super Admins
+    protected function notifySuperAdmins($title, $message, $type = 'info')
+    {
+        $superAdmins = User::where('role', 'SuperAdmin')->get();
 
+        foreach ($superAdmins as $admin) {
+            Notification::create([
+                'title' => $title,
+                'message' => $message,
+                'type' => $type,
+                'user_id' => $admin->user_id,
+            ]);
+        }
+    }
 }
