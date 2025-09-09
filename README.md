@@ -1,5 +1,7 @@
 # athletix
 
+-- open the readme in the vs code thanks
+
 1. install XAMPP/WAMPP/LARAGON or any host server for database (I used XAMPP)
 2. install composer [download composer heere(Composer-Setup.exe)](https://getcomposer.org/download/)
 3. setup your .env(if not exist create .env(C:\xampp\htdocs\athletix\.env))
@@ -15,7 +17,6 @@ APP_FALLBACK_LOCALE=en
 APP_FAKER_LOCALE=en_US
 
 APP_MAINTENANCE_DRIVER=file
-# APP_MAINTENANCE_STORE=database
 
 PHP_CLI_SERVER_WORKERS=4
 
@@ -35,10 +36,6 @@ DB_PASSWORD=
 
 # default username: admin.athletix.ph@ctu.com
 # default pass: Admin@Athletix
-#@Athletix2025
-# default username: testuser
-# default pass: password
-#@Athletix2025
 
 
 SESSION_DRIVER=file
