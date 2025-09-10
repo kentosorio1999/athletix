@@ -4,13 +4,27 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@yield('title', 'AthletiX')</title>
+    <link rel="icon" href="https://c.animaapp.com/mevbdbzo2I14VB/img/logo.png" type="image/x-icon" />
     <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body class="bg-white min-h-screen">
     <div class="flex">
-        {{-- Navbar (reusable partial) --}}
-        @include('partials.navbar')
+        {{-- Role-based navbar --}}
+        @php $roles = explode('|', auth()->user()->role ?? '') @endphp
+
+        @if(in_array('SuperAdmin', $roles))
+            @include('partials.navbar')
+        @endif
+        @if(in_array('Staff', $roles))
+            @include('partials.staffNavbar')
+        @endif
+        @if(in_array('Coach', $roles))
+            @include('partials.staffNavbar')
+        @endif
+        @if(in_array('Athlete', $roles))
+            @include('partials.staffNavbar')
+        @endif
         <main class="flex-1 p-8 bg-white justify-items-between min-h-screen w-screen">
           <header class="flex justify-between items-start mb-1">
             <h1 class="text-4xl font-bold text-brown-primary font-inknut">

@@ -89,7 +89,7 @@
         <div class="bg-white rounded-lg shadow-lg p-6">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-semibold">Recent Activity</h3>
-                <a href="{{ route('security.downloadLogs') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                <a href="{{ route('security.downloadLogs') }}" class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-2 rounded">
                     Download CSV
                 </a>
             </div>

@@ -3,6 +3,8 @@
 php artisan migrate:fresh --seed
 composer require maatwebsite/excel
 composer require barryvdh/laravel-dompdf
+composer require spatie/laravel-permission
+
 
 
 

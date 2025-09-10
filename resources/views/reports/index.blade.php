@@ -21,7 +21,7 @@
             <option value="Injured" {{ request('status') == 'Injured' ? 'selected' : '' }}>Injured</option>
             <option value="Graduated" {{ request('status') == 'Graduated' ? 'selected' : '' }}>Graduated</option>
         </select>
-        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Filter</button>
+        <button type="submit" class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-2 rounded">Filter</button>
     </form>
 
     <!-- Export Buttons -->

@@ -1,7 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Athlete Performance')
-
+@section('title', 'Performance Management')
+@section('header-actions')
+    <button
+        class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-2 rounded"
+        onclick="document.getElementById('addPerformanceModal').classList.remove('hidden')">
+        Add Performance
+    </button>
+@endsection
 @section('content')
 <div class="space-y-10">
 
@@ -9,16 +15,6 @@
     <section>
         <h2 class="text-2xl font-bold text-gray-800 mb-4">Athlete Performance</h2>
         <div class="bg-white rounded-lg shadow-lg p-6">
-
-            <!-- Add Performance Button -->
-            <div class="flex justify-end mb-4">
-                <button
-                    class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-                    onclick="document.getElementById('addPerformanceModal').classList.remove('hidden')">
-                    Add Performance
-                </button>
-            </div>
-
             <!-- Table -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left border">

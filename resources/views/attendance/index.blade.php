@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Attendance Records')
+@section('title', 'Attendance Management')
+@section('header-actions')
+    <button
+        class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-2 rounded"
+        onclick="document.getElementById('addAttendanceModal').classList.remove('hidden')">
+        Add Attendance
+    </button>
+@endsection
 
 @section('content')
 <div class="space-y-10">
@@ -9,16 +16,6 @@
     <section>
         <h2 class="text-2xl font-bold text-gray-800 mb-4">Attendance Records</h2>
         <div class="bg-white rounded-lg shadow-lg p-6">
-
-            <!-- Add Attendance Button -->
-            <div class="flex justify-end mb-4">
-                <button
-                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                    onclick="document.getElementById('addAttendanceModal').classList.remove('hidden')">
-                    Add Attendance
-                </button>
-            </div>
-
             <!-- Table -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left border">

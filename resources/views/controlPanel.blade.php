@@ -11,7 +11,7 @@
     <div class="bg-white rounded-lg shadow-lg p-6">
         <div class="flex justify-between mb-4">
             <h3 class="text-lg font-semibold">System Users</h3>
-            <button data-modal-target="addUserModal" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">+ Add User</button>
+            <button data-modal-target="addUserModal" class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-2 rounded-lg">+ Add User</button>
         </div>
 
         <!-- Scrollable container -->
@@ -81,7 +81,7 @@
     <div class="bg-white rounded-lg shadow-lg p-6">
         <div class="flex justify-between mb-4">
             <h3 class="text-lg font-semibold">Teams</h3>
-            <button data-modal-target="addTeamModal" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">+ Add Team</button>
+            <button data-modal-target="addTeamModal" class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-2 rounded-lg">+ Add Team</button>
         </div>
 
         <!-- Scrollable container -->
@@ -132,7 +132,7 @@
     <div class="bg-white rounded-lg shadow-lg p-6">
         <div class="flex justify-between mb-4">
             <h3 class="text-lg font-semibold">College Department</h3>
-            <button data-modal-target="addDepartmentModal" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">+ Add Department</button>
+            <button data-modal-target="addDepartmentModal" class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-2 rounded-lg">+ Add Department</button>
         </div>
         <div class="overflow-y-auto max-h-64 border rounded-lg">
             <table class="w-full text-left">
@@ -201,7 +201,7 @@
     <div class="bg-white rounded-lg shadow-lg p-6">
         <div class="flex justify-between mb-4">
             <h3 class="text-lg font-semibold">College Course</h3>
-            <button data-modal-target="addCourseModal" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">+ Add Course</button>
+            <button data-modal-target="addCourseModal" class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-2 rounded-lg">+ Add Course</button>
         </div>
         <div class="overflow-y-auto max-h-64 border rounded-lg">
             <table class="w-full text-left">
@@ -292,7 +292,7 @@
     <div class="bg-white rounded-lg shadow-lg p-6">
         <div class="flex justify-between mb-4">
             <h3 class="text-lg font-semibold">College Sections</h3>
-            <button data-modal-target="addSectionModal" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">+ Add Section</button>
+            <button data-modal-target="addSectionModal" class="bg-amber-900 hover:bg-amber-800 text-white px-4 py-2 rounded-lg">+ Add Section</button>
         </div>
         <div class="overflow-y-auto max-h-64 border rounded-lg">
             <table class="w-full text-left">

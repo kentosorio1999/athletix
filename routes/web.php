@@ -45,114 +45,116 @@ Route::post('/resend-otp', [AuthController::class, 'resendOtp'])->name('resend.o
 
 // ✅ Protected routes
 Route::middleware(['auth'])->group(function () {
-    // dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
-    // announcement
-    Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements');
-    Route::post('/announcements', [AnnouncementController::class, 'store'])->name('announcements');
-
-    // control panel
-    Route::get('/control-panel', [ControlPanelController::class, 'index'])->name('control.panel');
-    
-    // Users
-    Route::post('/control-panel/user/store', [ControlPanelController::class, 'storeUser'])->name('control-panel.storeUser');
-    Route::put('/control-panel/user/{id}/update', [ControlPanelController::class, 'updateUser'])->name('control-panel.updateUser');
-    Route::patch('/control-panel/user/{id}/delete', [ControlPanelController::class, 'deleteUser'])->name('control-panel.deleteUser');
-
-    // Teams
-    Route::post('/control-panel/team/store', [ControlPanelController::class, 'storeTeam'])->name('control-panel.storeTeam');
-    Route::put('/control-panel/team/{id}/update', [ControlPanelController::class, 'updateTeam'])->name('control-panel.updateTeam');
-    Route::delete('/control-panel/team/{id}/delete', [ControlPanelController::class, 'deleteTeam'])->name('control-panel.deleteTeam');
-
-    // Departments
-    Route::post('/departments/store', [ControlPanelController::class, 'storeDepartment'])->name('departments.store');
-    Route::put('/departments/{id}/update', [ControlPanelController::class, 'updateDepartment'])->name('departments.update');
-    Route::patch('/departments/{id}/deactivate', [ControlPanelController::class, 'deactivateDepartment'])->name('departments.deactivate');
-
-
-    // Course
-    Route::post('/courses/store', [ControlPanelController::class, 'storeDepartment'])->name('courses.store');
-    Route::put('/courses/{id}/update', [ControlPanelController::class, 'updateCourse'])->name('courses.update');
-    Route::patch('/courses/{id}/deactivate', [ControlPanelController::class, 'deactivateCourse'])->name('courses.deactivate');
-
-    // Sections
-    Route::post('/sections/store', [ControlPanelController::class, 'storeSection'])->name('sections.store');
-    Route::put('/sections/{id}/update', [ControlPanelController::class, 'updateSection'])->name('sections.update');
-    Route::patch('/sections/{id}/deactivate', [ControlPanelController::class, 'deactivateSection'])->name('sections.deactivate');
-
-
-    // Event
-    Route::get('/events', [EventController::class, 'index'])->name('events');
-    Route::post('/events/store', [EventController::class, 'storeEvent'])->name('events.storeEvent');
-    Route::put('/events/{id}/update', [EventController::class, 'updateEvent'])->name('events.updateEvent');
-    Route::delete('/events/{id}', [EventController::class, 'deleteEvent'])->name('events.deleteEvent');
-
-    // Database
-    Route::get('/control-panel/backup', [ControlPanelController::class, 'backupDatabase'])->name('control-panel.backupDatabase');
-    
-
-    // security protocol
-    Route::prefix('security')->middleware('auth')->group(function() {
-        Route::get('/', [SecurityController::class, 'index'])->name('security.index');
-        Route::post('/force-reset/{user}', [SecurityController::class, 'forceReset'])->name('security.forceReset');
-        Route::post('/deactivate/{user}', [SecurityController::class, 'deactivateUser'])->name('security.deactivateUser');
-        Route::post('/activate/{user}', [SecurityController::class, 'activateUser'])->name('security.activateUser');
-        Route::get('/download-logs', [SecurityController::class, 'downloadLogs'])->name('security.downloadLogs');
+    Route::middleware(['auth', 'role:SuperAdmin|Coach|Staff'])->group(function() {
+        // dashboard
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     });
 
-    // performance
-    Route::prefix('performance')->middleware('auth')->group(function() {
-        Route::get('/', [PerformanceController::class, 'index'])->name('performance.index'); // <- this is the correct name
-        Route::get('/create', [PerformanceController::class, 'create'])->name('performance.create');
-        Route::post('/store', [PerformanceController::class, 'store'])->name('performance.store');
-        Route::get('/edit/{performance}', [PerformanceController::class, 'edit'])->name('performance.edit');
-        Route::post('/update/{performance}', [PerformanceController::class, 'update'])->name('performance.update');
-        Route::post('/delete/{performance}', [PerformanceController::class, 'destroy'])->name('performance.destroy');
+    Route::middleware(['auth', 'role:SuperAdmin'])->group(function() {
+        
+        // announcement
+        Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements');
+        Route::post('/announcements', [AnnouncementController::class, 'store'])->name('announcements');
+
+        // control panel
+        Route::get('/control-panel', [ControlPanelController::class, 'index'])->name('control.panel');
+        
+        // Users
+        Route::post('/control-panel/user/store', [ControlPanelController::class, 'storeUser'])->name('control-panel.storeUser');
+        Route::put('/control-panel/user/{id}/update', [ControlPanelController::class, 'updateUser'])->name('control-panel.updateUser');
+        Route::patch('/control-panel/user/{id}/delete', [ControlPanelController::class, 'deleteUser'])->name('control-panel.deleteUser');
+
+        // Teams
+        Route::post('/control-panel/team/store', [ControlPanelController::class, 'storeTeam'])->name('control-panel.storeTeam');
+        Route::put('/control-panel/team/{id}/update', [ControlPanelController::class, 'updateTeam'])->name('control-panel.updateTeam');
+        Route::delete('/control-panel/team/{id}/delete', [ControlPanelController::class, 'deleteTeam'])->name('control-panel.deleteTeam');
+
+        // Departments
+        Route::post('/departments/store', [ControlPanelController::class, 'storeDepartment'])->name('departments.store');
+        Route::put('/departments/{id}/update', [ControlPanelController::class, 'updateDepartment'])->name('departments.update');
+        Route::patch('/departments/{id}/deactivate', [ControlPanelController::class, 'deactivateDepartment'])->name('departments.deactivate');
+
+
+        // Course
+        Route::post('/courses/store', [ControlPanelController::class, 'storeDepartment'])->name('courses.store');
+        Route::put('/courses/{id}/update', [ControlPanelController::class, 'updateCourse'])->name('courses.update');
+        Route::patch('/courses/{id}/deactivate', [ControlPanelController::class, 'deactivateCourse'])->name('courses.deactivate');
+
+        // Sections
+        Route::post('/sections/store', [ControlPanelController::class, 'storeSection'])->name('sections.store');
+        Route::put('/sections/{id}/update', [ControlPanelController::class, 'updateSection'])->name('sections.update');
+        Route::patch('/sections/{id}/deactivate', [ControlPanelController::class, 'deactivateSection'])->name('sections.deactivate');
+
+
+        // Event
+        Route::get('/events', [EventController::class, 'index'])->name('events');
+        Route::post('/events/store', [EventController::class, 'storeEvent'])->name('events.storeEvent');
+        Route::put('/events/{id}/update', [EventController::class, 'updateEvent'])->name('events.updateEvent');
+        Route::delete('/events/{id}', [EventController::class, 'deleteEvent'])->name('events.deleteEvent');
+
+        // Database
+        Route::get('/control-panel/backup', [ControlPanelController::class, 'backupDatabase'])->name('control-panel.backupDatabase');
+        
+
+        // security protocol
+        Route::prefix('security')->middleware('auth')->group(function() {
+            Route::get('/', [SecurityController::class, 'index'])->name('security.index');
+            Route::post('/force-reset/{user}', [SecurityController::class, 'forceReset'])->name('security.forceReset');
+            Route::post('/deactivate/{user}', [SecurityController::class, 'deactivateUser'])->name('security.deactivateUser');
+            Route::post('/activate/{user}', [SecurityController::class, 'activateUser'])->name('security.activateUser');
+            Route::get('/download-logs', [SecurityController::class, 'downloadLogs'])->name('security.downloadLogs');
+        });
+
+        // performance
+        Route::prefix('performance')->middleware('auth')->group(function() {
+            Route::get('/', [PerformanceController::class, 'index'])->name('performance.index'); // <- this is the correct name
+            Route::get('/create', [PerformanceController::class, 'create'])->name('performance.create');
+            Route::post('/store', [PerformanceController::class, 'store'])->name('performance.store');
+            Route::get('/edit/{performance}', [PerformanceController::class, 'edit'])->name('performance.edit');
+            Route::post('/update/{performance}', [PerformanceController::class, 'update'])->name('performance.update');
+            Route::post('/delete/{performance}', [PerformanceController::class, 'destroy'])->name('performance.destroy');
+        });
+
+
+        // attendance
+        Route::prefix('attendance')->middleware('auth')->group(function() {
+            Route::get('/', [AttendanceController::class, 'index'])->name('attendance');
+            Route::get('/create', [AttendanceController::class, 'create'])->name('attendance.create');
+            Route::post('/store', [AttendanceController::class, 'store'])->name('attendance.store');
+            Route::get('/edit/{attendance}', [AttendanceController::class, 'edit'])->name('attendance.edit');
+            Route::post('/update/{attendance}', [AttendanceController::class, 'update'])->name('attendance.update');
+            Route::post('/delete/{attendance}', [AttendanceController::class, 'destroy'])->name('attendance.destroy');
+        });
+
+        //reports
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+        Route::get('/reports/export/{format}', [App\Http\Controllers\ReportController::class, 'export'])->name('reports.export');
+        Route::get('/reports/export-pdf', [ReportController::class, 'exportPDF'])->name('reports.exportPDF');
+
+
+        //notifications
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::get('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+        Route::post('/notifications', [NotificationController::class, 'store'])->name('notifications.store');
+
+
+        Route::middleware(['auth', 'role:Staff'])->group(function () {
+            Route::get('/staff/profile', [StaffProfileController::class, 'edit'])->name('staff.profile.edit');
+            Route::post('/staff/profile', [StaffProfileController::class, 'update'])->name('staff.profile.update');
+        });
+
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');     // list users
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');    // create user
+        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit'); // edit form
+        Route::resource('users', UserController::class)->only(['store', 'update', 'destroy']);
+
     });
 
+     Route::middleware(['auth', 'role:Staff'])->group(function() {
 
-    // attendance
-    Route::prefix('attendance')->middleware('auth')->group(function() {
-        Route::get('/', [AttendanceController::class, 'index'])->name('attendance');
-        Route::get('/create', [AttendanceController::class, 'create'])->name('attendance.create');
-        Route::post('/store', [AttendanceController::class, 'store'])->name('attendance.store');
-        Route::get('/edit/{attendance}', [AttendanceController::class, 'edit'])->name('attendance.edit');
-        Route::post('/update/{attendance}', [AttendanceController::class, 'update'])->name('attendance.update');
-        Route::post('/delete/{attendance}', [AttendanceController::class, 'destroy'])->name('attendance.destroy');
-    });
+     });
 
-    //reports
-    Route::get('/reports', [ReportController::class, 'index'])->name('reports');
-    Route::get('/reports/export/{format}', [App\Http\Controllers\ReportController::class, 'export'])->name('reports.export');
-    Route::get('/reports/export-pdf', [ReportController::class, 'exportPDF'])->name('reports.exportPDF');
-
-
-    //notifications
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::get('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-    Route::post('/notifications', [NotificationController::class, 'store'])->name('notifications.store');
-    // Route::middleware(['auth', 'role:SuperAdmin'])->group(function() {
-    // });
-
-    Route::middleware(['auth', 'role:Staff'])->group(function () {
-        Route::get('/staff/profile', [StaffProfileController::class, 'edit'])->name('staff.profile.edit');
-        Route::post('/staff/profile', [StaffProfileController::class, 'update'])->name('staff.profile.update');
-    });
-
-    Route::post('/users', [UserController::class, 'store'])->name('users.store');
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');     // list users
-    Route::post('/users', [UserController::class, 'store'])->name('users.store');    // create user
-    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit'); // edit form
-    Route::resource('users', UserController::class)->only(['store', 'update', 'destroy']);
-    // Route::get('/control', [UserController::class,'controlPanel'])->name('control');
-
-    //Route::get('/performance', fn() => view('performance'))->name('performance');
-    // Route::get('/events', fn() => view('events'))->name('events');
-    //Route::get('/attendance', fn() => view('attendance'))->name('attendance');
-   // Route::get('/reports', fn() => view('reports'))->name('reports');
-    Route::get('/messages', fn() => view('messages'))->name('messages');
-    Route::get('/schedule', fn() => view('schedule'))->name('schedule');
     //Route::get('/notifications', fn() => view('notifications'))->name('notifications');
     Route::get('/settings', fn() => view('settings'))->name('settings');
 
