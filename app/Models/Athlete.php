@@ -18,6 +18,7 @@ class Athlete extends Model
         'section_id',
         'sport_id',
         'user_id',
+        'school_id',
         'removed'
     ];
 
@@ -29,6 +30,11 @@ class Athlete extends Model
     public function sport()
     {
         return $this->belongsTo(Sport::class, 'sport_id');
+    }
+
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class, 'athlete_team', 'athlete_id', 'team_id');
     }
 
     public function user()

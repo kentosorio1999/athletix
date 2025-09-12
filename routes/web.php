@@ -15,7 +15,9 @@ use App\Http\Controllers\PerformanceController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\StaffProfileController;
-
+use App\Http\Controllers\StaffController;
+use App\Http\Controllers\RegistrationApprovalController;
+use App\Http\Controllers\AthleteController;
 
 
 // ✅ Login page (GET)
@@ -48,6 +50,15 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['auth', 'role:SuperAdmin|Coach|Staff'])->group(function() {
         // dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        
+        // Settings
+        Route::get('/settings', [StaffController::class, 'settings'])->name('settings');
+
+        //reports
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+        Route::get('/reports/export/{format}', [App\Http\Controllers\ReportController::class, 'export'])->name('reports.export');
+        Route::get('/reports/export-pdf', [ReportController::class, 'exportPDF'])->name('reports.exportPDF');
+
     });
 
     Route::middleware(['auth', 'role:SuperAdmin'])->group(function() {
@@ -126,22 +137,10 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/delete/{attendance}', [AttendanceController::class, 'destroy'])->name('attendance.destroy');
         });
 
-        //reports
-        Route::get('/reports', [ReportController::class, 'index'])->name('reports');
-        Route::get('/reports/export/{format}', [App\Http\Controllers\ReportController::class, 'export'])->name('reports.export');
-        Route::get('/reports/export-pdf', [ReportController::class, 'exportPDF'])->name('reports.exportPDF');
-
-
         //notifications
         Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
         Route::get('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
         Route::post('/notifications', [NotificationController::class, 'store'])->name('notifications.store');
-
-
-        Route::middleware(['auth', 'role:Staff'])->group(function () {
-            Route::get('/staff/profile', [StaffProfileController::class, 'edit'])->name('staff.profile.edit');
-            Route::post('/staff/profile', [StaffProfileController::class, 'update'])->name('staff.profile.update');
-        });
 
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::get('/users', [UserController::class, 'index'])->name('users.index');     // list users
@@ -152,6 +151,30 @@ Route::middleware(['auth'])->group(function () {
     });
 
      Route::middleware(['auth', 'role:Staff'])->group(function() {
+
+        Route::prefix('staff')->name('staff.')->group(function () {
+            Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+            // Route::get('/athlete/deactivate', [RegistrationController::class, 'approval'])->name('athlete.deactivate');
+            // Route::get('/athlete/update', [RegistrationController::class, 'approval'])->name('athlete.update');
+            
+            // Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+
+            //registration
+            Route::get('/registration-approval', [RegistrationApprovalController::class, 'index'])
+                ->name('approval.index');
+            Route::patch('/registration-approval/{id}/approve', [RegistrationApprovalController::class, 'approve'])
+                ->name('approval.approve');
+            Route::patch('/registration-approval/{id}/reject', [RegistrationApprovalController::class, 'reject'])
+                ->name('approval.reject');
+
+            // Athlete Deactivation
+             Route::get('/athlete/update', [AthleteController::class, 'updateIndex'])->name('athlete.update');
+            Route::get('/athlete/deactivate', [AthleteController::class, 'deactivateIndex'])
+                ->name('athlete.deactivate');
+            Route::patch('/athlete/deactivate/{id}', [AthleteController::class, 'deactivate'])
+                ->name('athlete.deactivate.submit');
+        });
 
      });
 

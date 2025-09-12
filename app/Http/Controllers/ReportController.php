@@ -17,6 +17,7 @@ class ReportController extends Controller
             ->when($request->year, fn($q) => $q->whereYear('created_at', $request->year))
             ->when($request->sport, fn($q) => $q->where('sport_id', $request->sport))
             ->when($request->status, fn($q) => $q->where('conditions', $request->status))
+            ->when($request->year_level, fn($q) => $q->where('year_level', $request->year_level))
             ->get();
 
         $sports = Sport::all();
@@ -31,6 +32,7 @@ class ReportController extends Controller
             ->when($request->year, fn($q) => $q->whereYear('created_at', $request->year))
             ->when($request->sport, fn($q) => $q->where('sport_id', $request->sport))
             ->when($request->status, fn($q) => $q->where('conditions', $request->status))
+            ->when($request->year_level, fn($q) => $q->where('year_level', $request->year_level))
             ->get();
 
         // CSV Export
@@ -81,6 +83,10 @@ class ReportController extends Controller
     public function exportPDF()
     {
         $athletes = Athlete::with(['section', 'sport', 'participations', 'scholarships'])
+        ->when($request->year, fn($q) => $q->whereYear('created_at', $request->year))
+            ->when($request->sport, fn($q) => $q->where('sport_id', $request->sport))
+            ->when($request->status, fn($q) => $q->where('conditions', $request->status))
+            ->when($request->year_level, fn($q) => $q->where('year_level', $request->year_level))
             ->where('removed', 0)
             ->get();
 

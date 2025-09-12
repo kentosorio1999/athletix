@@ -8,7 +8,13 @@
 
     <!-- Filters -->
     <form method="GET" action="{{ route('reports') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <input type="number" name="year" value="{{ request('year') }}" placeholder="Year" class="border p-2 rounded">
+        <input type="number" name="year" value="{{ request('year') }}" placeholder="School Year" class="border p-2 rounded">
+        <select name="year_level" class="border rounded px-3 py-2">
+            <option value="">All Year Levels</option>
+            @foreach(['1st Year','2nd Year','3rd Year','4th Year','Alumni'] as $level)
+                <option value="{{ $level }}" {{ request('year_level')==$level ? 'selected' : '' }}>{{ $level }}</option>
+            @endforeach
+        </select>
         <select name="sport" class="border p-2 rounded">
             <option value="">All Sports</option>
             @foreach($sports as $sport)
