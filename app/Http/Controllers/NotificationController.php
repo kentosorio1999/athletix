@@ -13,7 +13,7 @@ class NotificationController extends Controller
     {
         $notifications = Notification::whereHas('user', function($q){
             $q->where('role', 'SuperAdmin');
-        })->orderBy('created_at', 'desc')->get();
+        })->orderBy('created_at', 'desc')->paginate(10);
 
         return view('notifications.index', compact('notifications'));
     }

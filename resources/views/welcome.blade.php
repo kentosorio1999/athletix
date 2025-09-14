@@ -9,103 +9,95 @@
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="bg-[#ffffffde]">
-    <main class="grid justify-items-center items-center min-h-screen">
-      <div class="bg-white w-[1280px] h-[720px] shadow-lg rounded-lg">
+    <main class="flex justify-center items-center min-h-screen p-4">
+      <!-- Outer Card -->
+      <div class="bg-white w-full max-w-5xl rounded-lg flex justify-center items-center">
+        
         <!-- Login Section -->
         <section
-          class="relative w-[687px] h-[382px] top-[169px] left-[301px] border border-[#8c2c08] rounded-xl shadow-md bg-[#fffbfa] flex overflow-hidden"
+          class="border border-[#8c2c08] rounded-xl shadow-md bg-[#fffbfa] flex flex-col md:flex-row w-full max-w-3xl overflow-hidden"
         >
           <!-- Left Side -->
           <div
-            class="w-[371px] h-full rounded-l-xl overflow-hidden bg-cover bg-no-repeat bg-center relative"
+            class="md:w-1/2 w-full h-48 md:h-auto relative bg-cover bg-no-repeat bg-center"
             style="background-image: url('/images/logoBackground.png');"
           >
             <img
               src="https://c.animaapp.com/mevbdbzo2I14VB/img/logo.png"
               alt="AthletiX logo"
-              class="absolute w-[159px] h-[156px] top-5 left-[83px]"
+              class="absolute w-28 h-28 md:w-40 md:h-40 top-4 left-1/2 -translate-x-1/2"
             />
             <h1
-              class="absolute w-64 top-[259px] left-[38px] text-2xl text-black font-serif drop-shadow"
+              class="absolute w-full text-center bottom-4 md:bottom-10 text-lg md:text-2xl text-black font-serif px-2"
             >
               Welcome to AthletiX!
             </h1>
           </div>
 
           <!-- Forms Container -->
-          <div class="relative w-[316px] h-full overflow-hidden">
+          <div class="relative md:w-1/2 w-full overflow-hidden">
             <div
               id="formsWrapper"
-              class="flex w-[632px] h-full transition-transform duration-500"
+              class="flex w-[200%] transition-transform duration-500"
             >
               <!-- Login Form -->
-              <div
-                class="w-[316px] p-8 flex flex-col justify-center shrink-0"
-              >
-                <h2
-                  class="text-xl font-semibold text-[#8c2c08] mb-8 text-center"
-                >
+              <div class="w-1/2 p-6 flex flex-col justify-center shrink-0">
+                <h2 class="text-xl font-semibold text-[#8c2c08] mb-6 text-center">
                   Log-In
                 </h2>
-                
-                  <form id="login-form" method="POST" action="{{ route('login') }}" class="flex flex-col gap-6">
-                      @csrf
-                      <!-- Username -->
-                      <div class="flex flex-col mb-4">
-                          <div class="flex items-center border border-[#8c2c08] rounded px-2">
-                              <input
-                                  type="email"
-                                  name="username"
-                                  id="username"
-                                  placeholder="Email"
-                                  required
-                                  class="flex-1 px-2 py-2 text-sm text-[#8c2c08] bg-transparent outline-none"
-                              />
-                          </div>
-                          <div id="username-error" class="text-red-500 text-sm mt-2"></div>
-                      </div>
+                <form id="login-form" method="POST" action="{{ route('login') }}" class="flex flex-col gap-4">
+                  @csrf
+                  <!-- Username -->
+                  <div>
+                    <div class="flex items-center border border-[#8c2c08] rounded px-2">
+                      <input
+                        type="email"
+                        name="username"
+                        id="username"
+                        placeholder="Email"
+                        required
+                        class="flex-1 px-2 py-2 text-sm text-[#8c2c08] bg-transparent outline-none"
+                      />
+                    </div>
+                    <div id="username-error" class="text-red-500 text-sm mt-2"></div>
+                  </div>
 
-                      <!-- Password -->
-                      <div class="flex flex-col mb-4">
-                          <div class="flex items-center border border-[#8c2c08] rounded px-2">
-                              <input
-                                  type="password"
-                                  name="password"
-                                  id="password"
-                                  placeholder="Password"
-                                  required
-                                  class="flex-1 px-2 py-2 text-sm text-[#8c2c08] bg-transparent outline-none"
-                              />
-                          </div>
-                          <div id="password-error" class="text-red-500 text-sm mt-2"></div>
-                      </div>
+                  <!-- Password -->
+                  <div>
+                    <div class="flex items-center border border-[#8c2c08] rounded px-2">
+                      <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="Password"
+                        required
+                        class="flex-1 px-2 py-2 text-sm text-[#8c2c08] bg-transparent outline-none"
+                      />
+                    </div>
+                    <div id="password-error" class="text-red-500 text-sm mt-2"></div>
+                  </div>
 
-                      <!-- Submit -->
-                      <button
-                          type="submit"
-                          class="bg-[#8c2c08] text-white py-2 rounded-full border border-[#8c2c08] hover:bg-[#7a2507] transition duration-200"
-                      >
-                          Log-In
-                      </button>
+                  <!-- Submit -->
+                  <button
+                    type="submit"
+                    class="bg-[#8c2c08] text-white py-2 rounded-full border border-[#8c2c08] hover:bg-[#7a2507] transition duration-200"
+                  >
+                    Log-In
+                  </button>
 
-                      <p class="text-sm text-center text-gray-600 mt-2">
-                          Don’t have an account?
-                          <a href="#" id="showSignup" class="text-[#8c2c08] font-semibold hover:underline">Click here</a>
-                      </p>
-                  </form>
-
+                  <p class="text-sm text-center text-gray-600 mt-2">
+                    Don’t have an account?
+                    <a href="#" id="showSignup" class="text-[#8c2c08] font-semibold hover:underline">Click here</a>
+                  </p>
+                </form>
               </div>
 
               <!-- Sign Up Form -->
-              <div
-                class="w-[316px] p-8 flex flex-col justify-center shrink-0"
-              >
-                <h2
-                  class="text-xl font-semibold text-[#8c2c08] mb-8 text-center"
-                >
+              <div class="w-1/2 p-6 flex flex-col justify-center shrink-0">
+                <h2 class="text-xl font-semibold text-[#8c2c08] mb-6 text-center">
                   Sign-Up
                 </h2>
-                <form id="signup-form" method="POST" action="{{ route('register') }}" class="flex flex-col gap-6">
+                <form id="signup-form" method="POST" action="{{ route('register') }}" class="flex flex-col gap-4">
                   @csrf
                   <!-- Email -->
                   <div class="flex items-center border border-[#8c2c08] rounded px-2">
@@ -152,7 +144,6 @@
                     <a href="#" id="showLogin" class="text-[#8c2c08] font-semibold hover:underline">Log-In</a>
                   </p>
                 </form>
-
               </div>
             </div>
           </div>
@@ -167,7 +158,7 @@
 
       showSignup.addEventListener("click", (e) => {
         e.preventDefault();
-        formsWrapper.style.transform = "translateX(-316px)";
+        formsWrapper.style.transform = "translateX(-50%)";
       });
 
       showLogin.addEventListener("click", (e) => {
@@ -215,33 +206,33 @@
     });
 </script>
 
-<script>
-document.getElementById('signup-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+  <script>
+  document.getElementById('signup-form').addEventListener('submit', function(e) {
+      e.preventDefault();
 
-    let formData = new FormData(this);
+      let formData = new FormData(this);
 
-    fetch("{{ route('register') }}", {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Accept': 'application/json'  // 👈 this forces JSON instead of redirect
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // ✅ redirect straight to OTP page
-            window.location.href = data.redirect_url;
-        } else {
-            alert(data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-});
-</script>
+      fetch("{{ route('register') }}", {
+          method: 'POST',
+          body: formData,
+          headers: {
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+              'Accept': 'application/json'  // 👈 this forces JSON instead of redirect
+          }
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              // ✅ redirect straight to OTP page
+              window.location.href = data.redirect_url;
+          } else {
+              alert(data.message);
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+  });
+  </script>
   </body>
 </html>

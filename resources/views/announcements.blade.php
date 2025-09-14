@@ -34,6 +34,10 @@
         </div>
       </article>
     @endforeach
+      <!-- Pagination -->
+  <div class="mt-6">
+      {{ $announcements->links() }}
+  </div>
   </div>
 
   <!-- Announcement Modal -->

@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@section('title', 'Registration Approval')
-
 @section('content')
 <div class="space-y-6">
 
@@ -65,18 +63,79 @@
                                     <button type="submit" class="px-3 py-1 bg-green-600 text-white rounded">Approve</button>
                                 </form>
 
-                                <form action="{{ route('staff.approval.reject', $athlete->athlete_id) }}" method="POST" class="inline" onsubmit="return confirm('Reject this registration?');">
+                                <!-- <form action="{{ route('staff.approval.reject', $athlete->athlete_id) }}" method="POST" class="inline" onsubmit="return confirm('Reject this registration?');">
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded">Reject</button>
-                                </form>
+                                </form> -->
+                                <!-- Reject Button (opens modal) -->
+                                <button 
+                                    type="button"
+                                    onclick="openRejectModal({{ $athlete->athlete_id }}, '{{ $athlete->full_name }}')"
+                                    class="px-3 py-1 bg-red-600 text-white rounded"
+                                >
+                                    Reject
+                                </button>
                             </td>
                         </tr>
                         @endforeach
                     </tbody>
                 </table>
+                <div class="mt-6">
+                    {{ $pendingAthletes->links() }}
+                </div>
             </div>
         @endif
+
+        <!-- Reject Modal -->
+        <div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
+            
+            <h2 class="text-xl font-bold mb-4">Reject Athlete</h2>
+            <p id="rejectAthleteName" class="mb-3 text-gray-700"></p>
+
+            <form id="rejectForm" method="POST">
+                @csrf
+                @method('PATCH')
+
+                <div class="mb-4">
+                    <label class="block font-semibold mb-1">Reason for Rejection</label>
+                    <textarea name="reason" rows="3" class="w-full border rounded-lg px-3 py-2" required></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeRejectModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                        Reject
+                    </button>
+                </div>
+            </form>
+        </div>
+        </div>
     </div>
 </div>
+
+<script>
+function openRejectModal(athleteId, athleteName) {
+    const modal = document.getElementById('rejectModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+
+    // Update form action dynamically
+    const form = document.getElementById('rejectForm');
+    form.action = "{{ route('staff.approval.reject', ':id') }}".replace(':id', athleteId)
+
+
+    // Show athlete name
+    document.getElementById('rejectAthleteName').innerText = `Rejecting: ${athleteName}`;
+}
+
+function closeRejectModal() {
+    const modal = document.getElementById('rejectModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+</script>
 @endsection

@@ -16,7 +16,7 @@ class AnnouncementController extends Controller
         // Fetch only announcements that are not removed
         $announcements = Announcement::where('removed', 0)
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(10);
 
         return view('announcements', compact('announcements'));
     }

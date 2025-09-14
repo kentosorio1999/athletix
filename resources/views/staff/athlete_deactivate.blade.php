@@ -12,15 +12,15 @@
     @endif
 
     <!-- Search & Filter Form -->
-
-    <form method="GET" action="{{ route('staff.approval.index') }}" class="mb-4 flex flex-wrap gap-3 items-center">
+    <form method="GET" action="{{ route('staff.athlete.deactivate') }}" class="mb-4 flex flex-wrap gap-3 items-center">
         <input type="text" name="search" value="{{ request('search') }}"
-               placeholder="Search by name"
-               class="border rounded px-3 py-2">
+            placeholder="Search by name"
+            class="border rounded px-3 py-2">
+
         <select name="team" class="border rounded px-3 py-1">
             <option value="">All Teams</option>
             @foreach($teams as $team)
-                <option value="{{ $team->id }}" {{ request('team') == $team->id ? 'selected' : '' }}>
+                <option value="{{ $team->team_id }}" {{ request('team') == $team->team_id ? 'selected' : '' }}>
                     {{ $team->team_name }}
                 </option>
             @endforeach
@@ -29,7 +29,9 @@
         <select name="gender" class="border rounded px-3 py-2">
             <option value="">All Genders</option>
             @foreach(['Male','Female','Other'] as $gender)
-                <option value="{{ $gender }}" {{ request('gender')==$gender ? 'selected' : '' }}>{{ $gender }}</option>
+                <option value="{{ $gender }}" {{ request('gender')==$gender ? 'selected' : '' }}>
+                    {{ $gender }}
+                </option>
             @endforeach
         </select>
 
@@ -37,22 +39,24 @@
         <a href="{{ route('staff.athlete.deactivate') }}" class="bg-gray-600 text-white px-4 py-2 rounded">Reset</a>
     </form>
 
+
+
     <!-- Athlete Table -->
     <table class="min-w-full bg-white border rounded shadow">
         <thead>
             <tr>
-                <th class="px-4 py-2 border">Name</th>
-                <th class="px-4 py-2 border">Team</th>
-                <th class="px-4 py-2 border">Actions</th>
+                <th class="px-1 py-1 border">Name</th>
+                <th class="px-1 py-1 border">Team</th>
+                <th class="px-1 py-1 border">Actions</th>
             </tr>
         </thead>
         <tbody>
             @forelse($athletes as $athlete)
             <tr>
                 <td class="px-4 py-2 border">{{ $athlete->full_name }}</td>
-                <td class="px-4 py-2 border"> {{ $athlete->teams->pluck('name')->join(', ') }}</td>
+                <td class="px-4 py-2 border"> {{ $athlete->teams->pluck('team_name')->join(', ') }}</td>
                 <td class="px-4 py-2 border">
-                    <form action="{{ route('staff.athlete.deactivate.submit', $athlete->id) }}" method="POST">
+                <form action="{{ route('staff.athlete.deactivate.submit', $athlete->athlete_id) }}" method="POST">
                         @csrf
                         @method('PATCH')
                         <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">

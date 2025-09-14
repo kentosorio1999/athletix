@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Athlete;
 use Illuminate\Http\Request;
+use App\Models\Notification;
+use App\Models\AuditLog;
 
 class RegistrationApprovalController extends Controller
 {
@@ -32,7 +34,7 @@ class RegistrationApprovalController extends Controller
             $query->where('gender', $request->gender);
         }
 
-        $pendingAthletes = $query->get();
+        $pendingAthletes = $query->paginate(10);
 
         return view('staff.registration_approval', compact('pendingAthletes'));
     }
@@ -44,20 +46,59 @@ class RegistrationApprovalController extends Controller
         $athlete->status = 'approved';
         $athlete->save();
 
+                // Save a notification for the athlete
+        Notification::create([
+            'title' => 'Registration Approved',
+            'message' => $request->reason,
+            'type' => 'error',
+            'user_id' => $athlete->user_id, // 👈 notify athlete’s user account
+        ]);
+
+        // Audit log
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'Athlete Approved',
+            'module' => 'User Approved',
+            'description' => "Approved Athlete: {$athlete->full_name}",
+            'ip_address' => $request->ip(),
+        ]);
         return redirect()->route('staff.approval.index')
             ->with('success', 'Athlete registration approved.');
     }
 
     // Reject athlete registration
-    public function reject($id)
+   public function reject(Request $request, $id)
     {
+        $request->validate([
+            'reason' => 'required|string|max:500',
+        ]);
+
         $athlete = Athlete::findOrFail($id);
         $athlete->status = 'reject';
+        $athlete->removed = 1;
         $athlete->save();
+
+        // Save a notification for the athlete
+        Notification::create([
+            'title' => 'Registration Rejected',
+            'message' => $request->reason,
+            'type' => 'error',
+            'user_id' => $athlete->user_id, // 👈 notify athlete’s user account
+        ]);
+
+        // Audit log
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'Athlete Rejection',
+            'module' => 'User Registration',
+            'description' => "Reject Athlete: {$athlete->full_name}",
+            'ip_address' => $request->ip(),
+        ]);
 
         return redirect()->route('staff.approval.index')
             ->with('error', 'Athlete registration rejected.');
     }
+
 
     // Optional: Move athlete to in review
     public function review($id)

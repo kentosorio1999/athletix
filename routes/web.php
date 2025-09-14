@@ -18,6 +18,7 @@ use App\Http\Controllers\StaffProfileController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\RegistrationApprovalController;
 use App\Http\Controllers\AthleteController;
+use App\Http\Controllers\StaffNotificationController;
 
 
 // ✅ Login page (GET)
@@ -158,7 +159,7 @@ Route::middleware(['auth'])->group(function () {
             // Route::get('/athlete/update', [RegistrationController::class, 'approval'])->name('athlete.update');
             
             // Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-            Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+            // Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
 
             //registration
             Route::get('/registration-approval', [RegistrationApprovalController::class, 'index'])
@@ -169,16 +170,30 @@ Route::middleware(['auth'])->group(function () {
                 ->name('approval.reject');
 
             // Athlete Deactivation
-             Route::get('/athlete/update', [AthleteController::class, 'updateIndex'])->name('athlete.update');
             Route::get('/athlete/deactivate', [AthleteController::class, 'deactivateIndex'])
                 ->name('athlete.deactivate');
             Route::patch('/athlete/deactivate/{id}', [AthleteController::class, 'deactivate'])
                 ->name('athlete.deactivate.submit');
+
+            // Athlete update
+            // ✅ Athlete Update (manage athletes by staff)
+            Route::get('/athletes', [AthleteController::class, 'index'])->name('athletes.index');
+            Route::patch('/athletes/{id}', [AthleteController::class, 'update'])->name('athletes.update');
+
+            // ✅ Staff Profile Update (staff managing their own profile)
+            Route::get('/profile', [StaffProfileController::class, 'edit'])->name('profile.edit');
+            Route::patch('/profile', [StaffProfileController::class, 'update'])->name('profile.update');
+        
+            // Notifications
+            Route::get('/notifications', [StaffNotificationController::class, 'index'])
+                ->name('notifications.index');
+            Route::post('/notifications/{id}/read', [StaffNotificationController::class, 'markAsRead'])
+                ->name('notifications.read');
         });
 
      });
 
     //Route::get('/notifications', fn() => view('notifications'))->name('notifications');
-    Route::get('/settings', fn() => view('settings'))->name('settings');
+    // Route::get('/settings', fn() => view('settings'))->name('settings');
 
 });

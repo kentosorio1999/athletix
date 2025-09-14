@@ -34,5 +34,8 @@
             @endforelse
         </tbody>
     </table>
+    <div class="mt-4">
+        {{ $notifications->links() }}
+    </div>
 </div>
 @endsection
