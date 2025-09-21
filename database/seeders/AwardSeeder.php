@@ -22,8 +22,10 @@ class AwardSeeder extends Seeder
         $eventId = $event ? $event->event_id : 1;
 
         foreach ($athletes as $athlete) {
-            $totalScore = $athlete->performance->sum('score'); // sum all scores
-            $averageScore = $athlete->performance->count() ? $totalScore / $athlete->performance->count() : 0;
+            // Use the relationship as a query to avoid null
+            $totalScore = $athlete->performances()->sum('score');
+            $count = $athlete->performances()->count();
+            $averageScore = $count ? $totalScore / $count : 0;
 
             $awardTitle = null;
 
@@ -44,6 +46,7 @@ class AwardSeeder extends Seeder
                 ]);
             }
         }
+
 
         $this->command->info('Awards seeded based on athlete performance!');
     }

@@ -51,7 +51,7 @@
       </button>
 
       <!-- Form -->
-      <form action="{{ route('announcements') }}" method="POST" class="space-y-4">
+      <form action="{{ route('announcements.index') }}" method="POST" class="space-y-4">
         @csrf
 
         <div>

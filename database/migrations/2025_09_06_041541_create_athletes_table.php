@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('athletes', function (Blueprint $table) {
             $table->id('athlete_id');
             $table->string('full_name')->index();
+            $table->string('profile_url')->nullable();
             $table->date('birthdate')->nullable();
             $table->enum('gender', ['Male','Female','Other'])->nullable();
             $table->enum('year_level', ['1st Year','2nd Year','3rd Year','4th Year','Alumni'])->default('1st Year');
@@ -21,7 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('section_id');
             $table->unsignedBigInteger('sport_id');
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->enum('status', ['pending', 'in review','approved','reject'])->default('pending');
+            $table->enum('status', ['pending', 'in review','approved','reject', 'inactive'])->default('pending');
             $table->enum('conditions', ['active', 'injured','graduate'])->default('active');
             $table->string('school_id');
             $table->integer('removed')->default(0)->index();

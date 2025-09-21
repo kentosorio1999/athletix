@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Department;
 use App\Models\Course;
 use App\Models\Section;
+use App\Models\Sport;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserMail;
 
 class ControlPanelController extends Controller
 {
@@ -23,11 +26,19 @@ class ControlPanelController extends Controller
         $users = User::where('removed', 0)->get();
         $teams = Team::where('removed', 0)->get();
         $logs = AuditLog::with('user')->orderBy('created_at', 'desc')->get();
-        $departments = Department::where('removed', 0)->get();  // added
-        $courses = Course::where('removed', 0)->get();          // added
-        $sections = Section::where('removed', 0)->get();        // added
+        $departments = Department::where('removed', 0)->get();
+        $courses = Course::where('removed', 0)->get();
+        $sections = Section::where('removed', 0)->get();
 
-        return view('controlPanel', compact('users', 'teams', 'logs', 'departments', 'courses', 'sections'));
+        // ✅ Sports and Coaches
+        $sports = Sport::with('coaches')->where('removed', 0)->get();
+        $coaches = User::where('role', 'Coach')->where('removed', 0)->get();
+
+        return view('controlPanel', compact(
+            'users', 'teams', 'logs',
+            'departments', 'courses', 'sections',
+            'sports', 'coaches'
+        ));
     }
 
 
@@ -56,6 +67,12 @@ class ControlPanelController extends Controller
             'role' => $request->role,
         ]);
 
+        // 4. Send OTP via email
+        try {
+            Mail::to($user->username)->send(new UserMail($request->username, $request->password));
+        } catch (\Exception $e) {
+            \Log::error("Mail failed: " . $e->getMessage());
+        }
         $this->logAction('Add', 'User', "Created user {$user->username}");
 
         return redirect()->back()->with('success', 'User added successfully.');
@@ -263,6 +280,80 @@ class ControlPanelController extends Controller
         $this->logAction('Delete', 'Section', "Deactivated section {$section->section_name}");
 
         return redirect()->back()->with('success', 'Section deactivated successfully.');
+    }
+
+    public function storeSport(Request $request)
+    {
+        $request->validate([
+            'sport_name' => 'required|string|max:255',
+            'coach_id'   => 'nullable|exists:users,user_id',
+        ]);
+
+        // Create sport first
+        $sport = Sport::create([
+            'sport_name' => $request->sport_name,
+        ]);
+
+        // If coach assigned, update coach.sport_id
+        if ($request->coach_id) {
+            $coach = Coach::where('user_id', $request->coach_id)->first();
+            if ($coach) {
+                $coach->sport_id = $sport->sport_id;
+                $coach->save();
+            }
+        }
+
+        $this->logAction('Add', 'Sport', "Created sport {$sport->sport_name}");
+
+        return redirect()->back()->with('success', 'Sport added successfully and coach assigned.');
+    }
+
+    public function updateSport(Request $request, $id)
+    {
+        $sport = Sport::findOrFail($id);
+
+        $request->validate([
+            'sport_name' => 'required|string|max:255',
+            'coach_id'   => 'nullable|exists:users,user_id',
+        ]);
+
+        // Update sport
+        $sport->update([
+            'sport_name' => $request->sport_name,
+        ]);
+
+        // Handle coach reassignment
+        if ($request->coach_id) {
+            // Remove previous coach assignment if any
+            Coach::where('sport_id', $sport->sport_id)->update(['sport_id' => null]);
+
+            // Assign new coach
+            $coach = Coach::where('user_id', $request->coach_id)->first();
+            if ($coach) {
+                $coach->sport_id = $sport->sport_id;
+                $coach->save();
+            }
+        } else {
+            // If no coach selected, unassign current coach
+            Coach::where('sport_id', $sport->sport_id)->update(['sport_id' => null]);
+        }
+
+        $this->logAction('Update', 'Sport', "Updated sport {$sport->sport_name}");
+
+        return redirect()->back()->with('success', 'Sport updated successfully.');
+    }
+
+    public function deactivateSport($id)
+    {
+        $sport = Sport::findOrFail($id);
+        $sport->update(['removed' => 1]);
+
+        // Also unassign coaches linked to this sport
+        Coach::where('sport_id', $sport->sport_id)->update(['sport_id' => null]);
+
+        $this->logAction('Delete', 'Sport', "Deactivated sport {$sport->sport_name}");
+
+        return redirect()->back()->with('success', 'Sport deactivated successfully.');
     }
 
 

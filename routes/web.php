@@ -1,39 +1,31 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Auth;
 
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AnnouncementController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\ReportController;
-use App\Http\Controllers\ControlPanelController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\SecurityController;
-use App\Http\Controllers\PerformanceController;
-use App\Http\Controllers\AttendanceController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\StaffProfileController;
-use App\Http\Controllers\StaffController;
-use App\Http\Controllers\RegistrationApprovalController;
-use App\Http\Controllers\AthleteController;
-use App\Http\Controllers\StaffNotificationController;
+use App\Http\Controllers\{
+    AuthController, DashboardController, AnnouncementController,
+    UserController, ReportController, ControlPanelController,
+    EventController, SecurityController, PerformanceController,
+    AttendanceController, NotificationController, StaffProfileController,
+    StaffController, RegistrationApprovalController, AthleteController,
+    StaffNotificationController, CoachDashboardController, CoachAttendancePerformanceController, 
+    CoachAthleteController, CoachController, CoachProfileController
+};
 
-
-// ✅ Login page (GET)
-Route::get('/', function () {
-    return view('welcome'); // your login.blade.php
-})->name('login')->middleware('guest'); 
-// 👆 important: name it "login" because Laravel's auth middleware redirects to this
-
-// ✅ Register (POST)
+// -----------------------------
+// Public Routes
+// -----------------------------
+Route::get('/', fn() => view('welcome'))->name('login')->middleware('guest');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
-
-// ✅ Login (POST)
 Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
 
-// ✅ Logout
+// OTP
+Route::get('/verify-otp/{user_id}', [AuthController::class, 'showOtpPage'])->name('verify.otp.page');
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.otp');
+Route::post('/resend-otp', [AuthController::class, 'resendOtp'])->name('resend.otp');
+
+// Logout
 Route::post('/logout', function () {
     Auth::logout();
     request()->session()->invalidate();
@@ -41,75 +33,97 @@ Route::post('/logout', function () {
     return redirect()->route('login');
 })->name('logout');
 
-// ✅ OTP Routes
-Route::get('/verify-otp/{user_id}', [AuthController::class, 'showOtpPage'])->name('verify.otp.page');
-Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.otp');
-Route::post('/resend-otp', [AuthController::class, 'resendOtp'])->name('resend.otp');
 
-// ✅ Protected routes
+// -----------------------------
+// Protected Routes
+// -----------------------------
 Route::middleware(['auth'])->group(function () {
-    Route::middleware(['auth', 'role:SuperAdmin|Coach|Staff'])->group(function() {
-        // dashboard
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-        
-        // Settings
-        Route::get('/settings', [StaffController::class, 'settings'])->name('settings');
 
-        //reports
-        Route::get('/reports', [ReportController::class, 'index'])->name('reports');
-        Route::get('/reports/export/{format}', [App\Http\Controllers\ReportController::class, 'export'])->name('reports.export');
-        Route::get('/reports/export-pdf', [ReportController::class, 'exportPDF'])->name('reports.exportPDF');
-
+    // -----------------------------
+    // SuperAdmin, Staff, Coach
+    // -----------------------------
+    Route::middleware(['role:SuperAdmin|Staff|Coach'])->group(function() {
+        //Announcement
+        Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+        Route::post('/announcements', [AnnouncementController::class, 'store'])->name('announcements.store');
+    
+        // Events
+        Route::prefix('events')->group(function() {
+            Route::get('/', [EventController::class, 'index'])->name('events');
+            Route::post('/store', [EventController::class, 'storeEvent'])->name('events.storeEvent');
+            Route::put('/{id}/update', [EventController::class, 'updateEvent'])->name('events.updateEvent');
+            Route::delete('/{id}', [EventController::class, 'deleteEvent'])->name('events.deleteEvent');
+        });
+    
     });
 
-    Route::middleware(['auth', 'role:SuperAdmin'])->group(function() {
-        
-        // announcement
-        Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements');
-        Route::post('/announcements', [AnnouncementController::class, 'store'])->name('announcements');
+    // -----------------------------
+    // SuperAdmin & Staff
+    // -----------------------------
+    Route::middleware(['role:SuperAdmin|Staff'])->group(function() {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/settings', [StaffController::class, 'settings'])->name('settings');
 
-        // control panel
-        Route::get('/control-panel', [ControlPanelController::class, 'index'])->name('control.panel');
-        
-        // Users
-        Route::post('/control-panel/user/store', [ControlPanelController::class, 'storeUser'])->name('control-panel.storeUser');
-        Route::put('/control-panel/user/{id}/update', [ControlPanelController::class, 'updateUser'])->name('control-panel.updateUser');
-        Route::patch('/control-panel/user/{id}/delete', [ControlPanelController::class, 'deleteUser'])->name('control-panel.deleteUser');
+        // Control Panel
+        Route::prefix('control-panel')->group(function() {
+            Route::get('/', [ControlPanelController::class, 'index'])->name('control.panel');
 
-        // Teams
-        Route::post('/control-panel/team/store', [ControlPanelController::class, 'storeTeam'])->name('control-panel.storeTeam');
-        Route::put('/control-panel/team/{id}/update', [ControlPanelController::class, 'updateTeam'])->name('control-panel.updateTeam');
-        Route::delete('/control-panel/team/{id}/delete', [ControlPanelController::class, 'deleteTeam'])->name('control-panel.deleteTeam');
+            // Users
+            Route::post('/user/store', [ControlPanelController::class, 'storeUser'])->name('control-panel.storeUser');
+            Route::put('/user/{id}/update', [ControlPanelController::class, 'updateUser'])->name('control-panel.updateUser');
+            Route::patch('/user/{id}/delete', [ControlPanelController::class, 'deleteUser'])->name('control-panel.deleteUser');
+
+            // Teams
+            Route::post('/team/store', [ControlPanelController::class, 'storeTeam'])->name('control-panel.storeTeam');
+            Route::put('/team/{id}/update', [ControlPanelController::class, 'updateTeam'])->name('control-panel.updateTeam');
+            Route::delete('/team/{id}/delete', [ControlPanelController::class, 'deleteTeam'])->name('control-panel.deleteTeam');
+
+            // Sports
+            Route::patch('/sports/deactivate/{id}', [ControlPanelController::class, 'deactivateSport'])
+                ->name('sports.deactivate');
+            Route::put('/sports/{id}/update', [ControlPanelController::class, 'updateSport'])
+            ->name('sports.update');
+            Route::post('/sports/store', [ControlPanelController::class, 'storeSport'])->name('sports.store');
+
+            // Backup
+            Route::get('/backup', [ControlPanelController::class, 'backupDatabase'])->name('control-panel.backupDatabase');
+        });
+
+        // Reports
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+        Route::get('/reports/export/{format}', [ReportController::class, 'export'])->name('reports.export');
+        Route::get('/reports/export-pdf', [ReportController::class, 'exportPDF'])->name('reports.exportPDF');
+    });
+
+    // -----------------------------
+    // SuperAdmin Only
+    // -----------------------------
+    Route::middleware(['role:SuperAdmin'])->group(function() {
 
         // Departments
-        Route::post('/departments/store', [ControlPanelController::class, 'storeDepartment'])->name('departments.store');
-        Route::put('/departments/{id}/update', [ControlPanelController::class, 'updateDepartment'])->name('departments.update');
-        Route::patch('/departments/{id}/deactivate', [ControlPanelController::class, 'deactivateDepartment'])->name('departments.deactivate');
+        Route::prefix('departments')->group(function() {
+            Route::post('/store', [ControlPanelController::class, 'storeDepartment'])->name('departments.store');
+            Route::put('/{id}/update', [ControlPanelController::class, 'updateDepartment'])->name('departments.update');
+            Route::patch('/{id}/deactivate', [ControlPanelController::class, 'deactivateDepartment'])->name('departments.deactivate');
+        });
 
-
-        // Course
-        Route::post('/courses/store', [ControlPanelController::class, 'storeDepartment'])->name('courses.store');
-        Route::put('/courses/{id}/update', [ControlPanelController::class, 'updateCourse'])->name('courses.update');
-        Route::patch('/courses/{id}/deactivate', [ControlPanelController::class, 'deactivateCourse'])->name('courses.deactivate');
+        // Courses
+        Route::prefix('courses')->group(function() {
+            Route::post('/store', [ControlPanelController::class, 'storeDepartment'])->name('courses.store');
+            Route::put('/{id}/update', [ControlPanelController::class, 'updateCourse'])->name('courses.update');
+            Route::patch('/{id}/deactivate', [ControlPanelController::class, 'deactivateCourse'])->name('courses.deactivate');
+        });
 
         // Sections
-        Route::post('/sections/store', [ControlPanelController::class, 'storeSection'])->name('sections.store');
-        Route::put('/sections/{id}/update', [ControlPanelController::class, 'updateSection'])->name('sections.update');
-        Route::patch('/sections/{id}/deactivate', [ControlPanelController::class, 'deactivateSection'])->name('sections.deactivate');
+        Route::prefix('sections')->group(function() {
+            Route::post('/store', [ControlPanelController::class, 'storeSection'])->name('sections.store');
+            Route::put('/{id}/update', [ControlPanelController::class, 'updateSection'])->name('sections.update');
+            Route::patch('/{id}/deactivate', [ControlPanelController::class, 'deactivateSection'])->name('sections.deactivate');
+        });
 
 
-        // Event
-        Route::get('/events', [EventController::class, 'index'])->name('events');
-        Route::post('/events/store', [EventController::class, 'storeEvent'])->name('events.storeEvent');
-        Route::put('/events/{id}/update', [EventController::class, 'updateEvent'])->name('events.updateEvent');
-        Route::delete('/events/{id}', [EventController::class, 'deleteEvent'])->name('events.deleteEvent');
-
-        // Database
-        Route::get('/control-panel/backup', [ControlPanelController::class, 'backupDatabase'])->name('control-panel.backupDatabase');
-        
-
-        // security protocol
-        Route::prefix('security')->middleware('auth')->group(function() {
+        // Security
+        Route::prefix('security')->group(function() {
             Route::get('/', [SecurityController::class, 'index'])->name('security.index');
             Route::post('/force-reset/{user}', [SecurityController::class, 'forceReset'])->name('security.forceReset');
             Route::post('/deactivate/{user}', [SecurityController::class, 'deactivateUser'])->name('security.deactivateUser');
@@ -117,9 +131,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/download-logs', [SecurityController::class, 'downloadLogs'])->name('security.downloadLogs');
         });
 
-        // performance
-        Route::prefix('performance')->middleware('auth')->group(function() {
-            Route::get('/', [PerformanceController::class, 'index'])->name('performance.index'); // <- this is the correct name
+        // Performance
+        Route::prefix('performance')->group(function() {
+            Route::get('/', [PerformanceController::class, 'index'])->name('performance.index');
             Route::get('/create', [PerformanceController::class, 'create'])->name('performance.create');
             Route::post('/store', [PerformanceController::class, 'store'])->name('performance.store');
             Route::get('/edit/{performance}', [PerformanceController::class, 'edit'])->name('performance.edit');
@@ -127,9 +141,8 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/delete/{performance}', [PerformanceController::class, 'destroy'])->name('performance.destroy');
         });
 
-
-        // attendance
-        Route::prefix('attendance')->middleware('auth')->group(function() {
+        // Attendance
+        Route::prefix('attendance')->group(function() {
             Route::get('/', [AttendanceController::class, 'index'])->name('attendance');
             Route::get('/create', [AttendanceController::class, 'create'])->name('attendance.create');
             Route::post('/store', [AttendanceController::class, 'store'])->name('attendance.store');
@@ -138,62 +151,76 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/delete/{attendance}', [AttendanceController::class, 'destroy'])->name('attendance.destroy');
         });
 
-        //notifications
-        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-        Route::get('/notifications/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-        Route::post('/notifications', [NotificationController::class, 'store'])->name('notifications.store');
-
-        Route::post('/users', [UserController::class, 'store'])->name('users.store');
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');     // list users
-        Route::post('/users', [UserController::class, 'store'])->name('users.store');    // create user
-        Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit'); // edit form
-        Route::resource('users', UserController::class)->only(['store', 'update', 'destroy']);
-
-    });
-
-     Route::middleware(['auth', 'role:Staff'])->group(function() {
-
-        Route::prefix('staff')->name('staff.')->group(function () {
-            Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
-            // Route::get('/athlete/deactivate', [RegistrationController::class, 'approval'])->name('athlete.deactivate');
-            // Route::get('/athlete/update', [RegistrationController::class, 'approval'])->name('athlete.update');
-            
-            // Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-            // Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-
-            //registration
-            Route::get('/registration-approval', [RegistrationApprovalController::class, 'index'])
-                ->name('approval.index');
-            Route::patch('/registration-approval/{id}/approve', [RegistrationApprovalController::class, 'approve'])
-                ->name('approval.approve');
-            Route::patch('/registration-approval/{id}/reject', [RegistrationApprovalController::class, 'reject'])
-                ->name('approval.reject');
-
-            // Athlete Deactivation
-            Route::get('/athlete/deactivate', [AthleteController::class, 'deactivateIndex'])
-                ->name('athlete.deactivate');
-            Route::patch('/athlete/deactivate/{id}', [AthleteController::class, 'deactivate'])
-                ->name('athlete.deactivate.submit');
-
-            // Athlete update
-            // ✅ Athlete Update (manage athletes by staff)
-            Route::get('/athletes', [AthleteController::class, 'index'])->name('athletes.index');
-            Route::patch('/athletes/{id}', [AthleteController::class, 'update'])->name('athletes.update');
-
-            // ✅ Staff Profile Update (staff managing their own profile)
-            Route::get('/profile', [StaffProfileController::class, 'edit'])->name('profile.edit');
-            Route::patch('/profile', [StaffProfileController::class, 'update'])->name('profile.update');
-        
-            // Notifications
-            Route::get('/notifications', [StaffNotificationController::class, 'index'])
-                ->name('notifications.index');
-            Route::post('/notifications/{id}/read', [StaffNotificationController::class, 'markAsRead'])
-                ->name('notifications.read');
+        // Notifications
+        Route::prefix('notifications')->group(function() {
+            Route::get('/', [NotificationController::class, 'index'])->name('notifications.index');
+            Route::get('/mark-as-read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+            Route::post('/', [NotificationController::class, 'store'])->name('notifications.store');
         });
 
-     });
+        // Users
+        Route::resource('users', UserController::class)->only(['store', 'update', 'destroy', 'index', 'edit']);
+    });
 
-    //Route::get('/notifications', fn() => view('notifications'))->name('notifications');
-    // Route::get('/settings', fn() => view('settings'))->name('settings');
+    // -----------------------------
+    // Staff Only
+    // -----------------------------
+    Route::middleware(['role:Staff'])->prefix('staff')->name('staff.')->group(function() {
+        Route::get('/registration-approval', [RegistrationApprovalController::class, 'index'])->name('approval.index');
+        Route::patch('/registration-approval/{id}/approve', [RegistrationApprovalController::class, 'approve'])->name('approval.approve');
+        Route::patch('/registration-approval/{id}/reject', [RegistrationApprovalController::class, 'reject'])->name('approval.reject');
+
+        Route::get('/athlete/deactivate', [AthleteController::class, 'deactivateIndex'])->name('athlete.deactivate');
+        Route::patch('/athlete/deactivate/{id}', [AthleteController::class, 'deactivate'])->name('athlete.deactivate.submit');
+
+        Route::get('/athletes', [AthleteController::class, 'index'])->name('athletes.index');
+        Route::patch('/athletes/{id}', [AthleteController::class, 'update'])->name('athletes.update');
+
+        Route::get('/profile', [StaffProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [StaffProfileController::class, 'update'])->name('profile.update');
+
+        Route::get('/notifications', [StaffNotificationController::class, 'index'])->name('notifications.index');
+        Route::post('/notifications/{id}/read', [StaffNotificationController::class, 'markAsRead'])->name('notifications.read');
+    });
+
+    // -----------------------------
+    // Coach Only
+    // -----------------------------
+    Route::middleware(['role:Coach'])->prefix('coach')->name('coach.')->group(function() {
+        Route::get('/dashboard', [CoachDashboardController::class, 'index'])->name('dashboard.index');
+
+        Route::get('/athletes', [CoachAthleteController::class, 'index'])->name('athletes.index');
+        Route::get('/athletes/{athlete}', [CoachAthleteController::class, 'show'])->name('athletes.show');
+        Route::post('/athletes/{athlete}/notes', [CoachAthleteController::class, 'storeNote'])->name('athletes.notes.store');
+        Route::post('/athletes/{athlete}/assign-event', [CoachAthleteController::class, 'assignEvent'])->name('athletes.assignEvent');
+
+
+        Route::get('/attendance', [CoachAttendancePerformanceController::class, 'index'])->name('attendance.index');
+        Route::post('/attendance', [CoachAttendancePerformanceController::class, 'store'])->name('attendance.store');
+    
+        // Registration approval
+        Route::get('/events/{event}/registrations', [CoachController::class, 'registrations'])->name('events.registrations');
+        Route::post('/events/{event}/registrations/{athlete}/approve', [CoachController::class, 'approve'])->name('events.registrations.approve');
+        Route::post('/events/{event}/registrations/{athlete}/reject', [CoachController::class, 'reject'])->name('events.registrations.reject');
+            
+        //Setting
+        Route::get('/profile', [CoachProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [CoachProfileController::class, 'update'])->name('profile.update');
+
+    
+    });
+
+
+    // -----------------------------
+    // Athlete Only
+    // -----------------------------
+    Route::middleware(['role:Athlete'])->prefix('athlete')->name('athlete.')->group(function() {
+        Route::get('/dashboard', [CoachDashboardController::class, 'index'])->name('dashboard.index');
+
+       // event registration
+       Route::post('/events/{id}/join', [EventRegistrationController::class, 'requestJoin'])
+        ->middleware(['auth', 'role:athlete'])
+        ->name('events.join');
+    });
 
 });

@@ -19,12 +19,17 @@ class Sport extends Model
 
     public function coaches()
     {
-        return $this->hasMany(Coach::class, 'sport_id');
+         return $this->hasOne(Coach::class, 'sport_id');
     }
 
     public function events()
     {
         return $this->hasMany(Event::class, 'sport_id');
+    }
+
+    public function teams()
+    {
+        return $this->hasMany(Team::class, 'sport_id', 'sport_id');
     }
 
     public function announcements()

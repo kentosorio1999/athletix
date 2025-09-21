@@ -30,7 +30,7 @@
             </tr>
           </thead>
           <tbody>
-            @foreach($events as $event)
+            @forelse($events as $event)
             <tr class="bg-gray-50">
               <td class="p-3 border">{{ $event->event_name }}</td>
               <td class="p-3 border">{{ $event->event_date }}</td>
@@ -48,40 +48,52 @@
 
             <!-- Edit Event Modal -->
             <div id="editEventModal{{ $event->event_id }}" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-              <div class="bg-white p-6 rounded-lg w-1/3">
-                <h3 class="font-bold text-lg mb-4">Edit Event</h3>
-                <form action="{{ route('events.updateEvent', $event->event_id) }}" method="POST">
-                  @csrf
-                  @method('PUT')
-                  <label>Event Name</label>
-                  <input type="text" name="event_name" value="{{ $event->event_name }}" class="w-full mb-2 p-2 border rounded">
+                <div class="bg-white p-6 rounded-lg w-1/3">
+                    <h3 class="font-bold text-lg mb-4">Edit Event</h3>
+                    <form action="{{ route('events.updateEvent', $event->event_id) }}" method="POST">
+                        @csrf
+                        @method('PUT')
 
-                  <label>Event Date</label>
-                  <input type="date" name="event_date" value="{{ $event->event_date }}" class="w-full mb-2 p-2 border rounded">
+                        <label>Event Name</label>
+                        <input type="text" name="event_name" value="{{ old('event_name', $event->event_name) }}" class="w-full mb-2 p-2 border rounded">
 
-                  <label>Event Type</label>
-                  <select name="event_type" class="w-full mb-2 p-2 border rounded">
-                    <option value="Training" @if($event->event_type=='Training') selected @endif>Training</option>
-                    <option value="Competition" @if($event->event_type=='Competition') selected @endif>Competition</option>
-                    <option value="Meeting" @if($event->event_type=='Meeting') selected @endif>Meeting</option>
-                  </select>
+                        <label>Event Date</label>
+                        <input type="date" name="event_date" value="{{ old('event_date', $event->event_date->format('Y-m-d')) }}" class="w-full mb-2 p-2 border rounded">
 
-                  <label>Sport</label>
-                  <select name="sport_id" class="w-full mb-2 p-2 border rounded">
-                    @foreach($sports as $sport)
-                    <option value="{{ $sport->sport_id }}" @if($event->sport_id == $sport->sport_id) selected @endif>{{ $sport->sport_name }}</option>
-                    @endforeach
-                  </select>
+                        <label>Event Type</label>
+                        <select name="event_type" class="w-full mb-2 p-2 border rounded">
+                            <option value="Training" @if(old('event_type', $event->event_type) == 'Training') selected @endif>Training</option>
+                            <option value="Competition" @if(old('event_type', $event->event_type) == 'Competition') selected @endif>Competition</option>
+                            <option value="Meeting" @if(old('event_type', $event->event_type) == 'Meeting') selected @endif>Meeting</option>
+                            <option value="TryOut" @if(old('event_type', $event->event_type) == 'TryOut') selected @endif>Try Out</option>
+                        </select>
 
-                  <div class="flex justify-end space-x-2 mt-4">
-                    <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded" onclick="closeModal('editEventModal{{ $event->event_id }}')">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Save</button>
-                  </div>
-                </form>
-              </div>
+                        <label>Location</label>
+                        <input type="text" name="location" value="{{ old('location', $event->location) }}" class="w-full mb-2 p-2 border rounded" placeholder="Enter location">
+
+                        <label>Sport</label>
+                        <select name="sport_id" class="w-full mb-2 p-2 border rounded">
+                            @foreach($sports as $sport)
+                                <option value="{{ $sport->sport_id }}" @if(old('sport_id', $event->sport_id) == $sport->sport_id) selected @endif>{{ $sport->sport_name }}</option>
+                            @endforeach
+                        </select>
+
+                        <div class="flex justify-end space-x-2 mt-4">
+                            <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded" onclick="closeModal('editEventModal{{ $event->event_id }}')">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Save</button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
-            @endforeach
+
+              @empty
+              <tr>
+                <td colspan="5" class="text-center p-6 text-gray-500">
+                  No events found. Click <strong>+ Add Event</strong> to create a new one.
+                </td>
+              </tr>
+            @endforelse
           </tbody>
         </table>
       </div>
@@ -107,7 +119,12 @@
         <option value="Training">Training</option>
         <option value="Competition">Competition</option>
         <option value="Meeting">Meeting</option>
+         <option value="TryOut">Try Out</option>
       </select>
+
+      <label>Location</label>
+      <input type="text" name="location" class="w-full mb-2 p-2 border rounded" placeholder="Enter location">
+
 
       <label>Sport</label>
       <select name="sport_id" class="w-full mb-2 p-2 border rounded">

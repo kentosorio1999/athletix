@@ -30,15 +30,31 @@
 
     <!-- Announcements -->
     <div class="relative group">
-      <a href="{{ route('staff.announcements.index') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
+      <a href="{{ route('announcements.index') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
           <path d="M4 10v4c0 1.1.9 2 2 2h2l4 5V5L8 9H6c-1.1 0-2 .9-2 2zm10-5v14l7-5V10l-7-5z"/>
         </svg>
-        @if (request()->routeIs('staff.announcements.index'))
+        @if (request()->routeIs('announcements.index'))
           <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
         @endif
       </a>
       <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Announcements</span>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="relative group">
+      <a href="{{ route('control.panel') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
+        <!-- Cog Icon (outline style) -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 3.5l.75 2.5a7.003 7.003 0 014.5 4.5l2.5.75-2.5.75a7.003 7.003 0 01-4.5 4.5l-.75 2.5-.75-2.5a7.003 7.003 0 01-4.5-4.5l-2.5-.75 2.5-.75a7.003 7.003 0 014.5-4.5l.75-2.5z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+
+        @if (request()->routeIs('control.panel'))
+          <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
+        @endif
+      </a>
+      <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Control Panel</span>
     </div>
 
     <!-- Registration approval -->
@@ -101,70 +117,31 @@
       </span>
 </div>
 
-
-    <!-- <div class="relative group">
-      <a href="{{ route('events') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
-        </svg>
-        @if (request()->routeIs('events'))
-          <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
-        @endif
-      </a>
-      <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Events</span>
-    </div> -->
-
-    <!-- Events -->
-    <!-- <div class="relative group">
-      <a href="{{ route('events') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
-        </svg>
-        @if (request()->routeIs('events'))
-          <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
-        @endif
-      </a>
-      <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Events</span>
-    </div> -->
-
-    <!-- Attendance -->
-  <!-- <div class="relative group">
-    <a href="{{ route('attendance') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
+  <!-- Reports -->
+  <div class="relative group">
+    <a href="{{ route('reports') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
       <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
       </svg>
-      @if (request()->routeIs('attendance'))
+      @if (request()->routeIs('reports'))
         <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
       @endif
     </a>
-    <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Attendance</span>
-  </div> -->
+    <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Reports</span>
+  </div>
 
-    <!-- Reports -->
-    <div class="relative group">
-      <a href="{{ route('reports') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
-        </svg>
-        @if (request()->routeIs('reports'))
-          <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
-        @endif
-      </a>
-      <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Reports</span>
-    </div>
-
-    <!-- Notifications -->
-    <div class="relative group">
-      <a href="{{ route('staff.notifications.index') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
-        </svg>
-        @if (request()->routeIs('staff.notifications.index'))
-          <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
-        @endif
-      </a>
-      <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Notifications</span>
-    </div>
+  <!-- Notifications -->
+  <div class="relative group">
+    <a href="{{ route('staff.notifications.index') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
+      <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+      </svg>
+      @if (request()->routeIs('staff.notifications.index'))
+        <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
+      @endif
+    </a>
+    <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Notifications</span>
+  </div>
 
     <!-- Settings -->
 

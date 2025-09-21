@@ -66,14 +66,40 @@ class AuthController extends Controller
         if ($user && Hash::check($request->password, $user->password)) {
             Auth::login($user);
 
+            // Redirect URL based on role
+            switch ($user->role) {
+                case 'SuperAdmin':
+                    $redirectUrl = route('dashboard');
+                    break;
+
+                case 'Staff':
+                    $redirectUrl = route('dashboard');
+                    break;
+
+                case 'Coach':
+                    $redirectUrl = route('coach.dashboard.index');
+                    break;
+
+                case 'Athlete':
+                    $redirectUrl = route('athlete.dashboard.index');
+                    break;
+
+                default:
+                    $redirectUrl = route('dashboard'); // fallback
+            }
+
             return response()->json([
                 'success' => true,
-                'redirect_url' => route('dashboard')
+                'redirect_url' => $redirectUrl
             ]);
         }
 
         // Failed login notification
-        $this->notifySuperAdmins('Failed Login Attempt', "Failed login attempt with username: {$request->username}", 'warning');
+        $this->notifySuperAdmins(
+            'Failed Login Attempt',
+            "Failed login attempt with username: {$request->username}",
+            'warning'
+        );
 
         return response()->json([
             'success' => false,

@@ -16,10 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('sport_id');
             $table->string('event_name')->index();
             $table->date('event_date');
-            $table->enum('event_type', ['Training','Competition','Meeting']);
+            $table->string('location')->nullable();
+            $table->enum('event_type', ['Training','Competition','Meeting', 'TryOut']);
             $table->integer('removed')->default(0)->index();
             $table->timestamps();
-
             $table->foreign('sport_id')->references('sport_id')->on('sports')->onDelete('cascade');
             $table->index('sport_id');
         });

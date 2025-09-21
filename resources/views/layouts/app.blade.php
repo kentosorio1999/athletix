@@ -6,7 +6,8 @@
     <title>@yield('title', 'AthletiX')</title>
     <link rel="icon" href="https://c.animaapp.com/mevbdbzo2I14VB/img/logo.png" type="image/x-icon" />
     <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body class="bg-white min-h-screen">
     <div class="flex">
@@ -20,13 +21,15 @@
             @include('partials.staffNavbar')
         @endif
         @if(in_array('Coach', $roles))
-            @include('partials.staffNavbar')
+            @include('partials.coachNavbar')
         @endif
         @if(in_array('Athlete', $roles))
             @include('partials.staffNavbar')
         @endif
         <main class="flex-1 p-8 bg-white justify-items-between min-h-screen w-screen">
-          <header class="flex justify-between items-start mb-1">
+        <h2 class="text-2xl font-bold mb-6 shadow-lg p-6">Welcome, {{ auth()->user()->role }}</h2>
+  
+        <header class="flex justify-between items-start mb-1">
             <h1 class="text-4xl font-bold text-brown-primary font-inknut">
               @yield('title')
             </h1>

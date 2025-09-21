@@ -18,7 +18,7 @@ class AnnouncementController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('announcements', compact('announcements'));
+        return view('announcements.index', compact('announcements'));
     }
 
     /**
@@ -46,6 +46,6 @@ class AnnouncementController extends Controller
             'removed' => 0,
         ]);
 
-        return redirect()->route('announcements')->with('success', 'Announcement added successfully.');
+        return redirect()->route('announcements.index')->with('success', 'Announcement added successfully.');
     }
 }

@@ -200,6 +200,34 @@ class CTUSeeder extends Seeder
                 'updated_at' => now(),
             ]);
         }
+        
+        DB::table('events')->insert([
+            [
+                'event_name' => 'City Marathon 2025',
+                'sport_id' => 1,
+                'event_date' => '2025-10-15',
+                'event_type' => 'Competition',
+                'location' => 'Central Park',
+                'created_at' => now(),
+            ],
+            [
+                'event_name' => 'Regional Swimming Championship',
+                'sport_id' => 2,
+                'event_date' => '2025-09-20',
+                'event_type' => 'Training',
+                'location' => 'Aquatic Center',
+                'created_at' => now(),
+            ],
+            [
+                'event_name' => 'State Track & Field Meet',
+                'sport_id' => 1,
+                'event_date' => '2025-11-05',
+                'event_type' => 'TryOut',
+                'location' => 'National Stadium',
+                'created_at' => now(),
+            ],
+        ]);
+
 
         // =========================
         // Attendance
@@ -350,5 +378,44 @@ class CTUSeeder extends Seeder
         foreach ($notifications as $data) {
             Notification::create($data); // ✅ singular
         }
+
+        DB::table('training_notes')->insert([
+            [
+                'coach_id' => 1,
+                'athlete_id' => 1,
+                'note' => 'Focus on endurance training for the next two weeks.',
+                'created_at' => now(),
+            ],
+            [
+                'coach_id' => 2,
+                'athlete_id' => 2,
+                'note' => 'Improve sprint start technique.',
+                'created_at' => now(),
+            ],
+            [
+                'coach_id' => 1,
+                'athlete_id' => 3,
+                'note' => 'Maintain current diet plan and hydration.',
+                'created_at' => now(),
+            ],
+        ]);
+
+        DB::table('athlete_event')->insert([
+            [
+                'athlete_id' => 1,
+                'event_id' => 1,
+                'created_at' => now(),
+            ],
+            [
+                'athlete_id' => 2,
+                'event_id' => 2,
+                'created_at' => now(),
+            ],
+            [
+                'athlete_id' => 3,
+                'event_id' => 3,
+                'created_at' => now(),
+            ],
+        ]);
     }
 }

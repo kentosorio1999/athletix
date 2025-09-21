@@ -108,4 +108,17 @@ class AthleteController extends Controller
 
         return redirect()->route('staff.athletes.index')->with('success', 'Athlete updated successfully.');
     }
+
+
+    public function requestJoin($eventId)
+    {
+        $athlete = auth()->user()->athlete;
+
+        EventRegistration::firstOrCreate([
+            'event_id'   => $eventId,
+            'athlete_id' => $athlete->athlete_id,
+        ]);
+
+        return back()->with('success', 'Request sent. Awaiting coach approval.');
+    }
 }

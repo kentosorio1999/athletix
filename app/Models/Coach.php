@@ -27,4 +27,9 @@ class Coach extends Model
     {
         return $this->belongsTo(Sport::class, 'sport_id');
     }
+
+    public function trainingNotes()
+    {
+        return $this->hasMany(TrainingNote::class, 'coach_id');
+    }
 }

@@ -1,4 +1,6 @@
 <?php
+namespace App\Console\Commands;
+
 use Illuminate\Console\Command;
 use App\Models\Notification;
 use App\Models\User;
