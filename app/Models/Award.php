@@ -10,6 +10,11 @@ class Award extends Model
 
     public function athlete()
     {
-        return $this->belongsTo(Athlete::class, 'athlete_id', 'athlete_id');
+        return $this->belongsTo(Athlete::class, 'athlete_id');
+    }
+
+    public function event()
+    {
+        return $this->belongsTo(Event::class, 'event_id');
     }
 }

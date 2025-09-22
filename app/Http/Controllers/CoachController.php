@@ -11,12 +11,27 @@ use App\Models\AthleteTeam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\AthleteNotification;
+use App\Models\Coach;
 
 class CoachController extends Controller
 {
     public function index()
     {
-        $events = Event::with('sport')->where('removed', 0)->get();
+        // Get the logged-in coach based on the user_id
+        $coach = Coach::where('user_id', Auth::id())->first();
+
+        if (!$coach) {
+            // If coach not found, return empty or handle error
+            return view('coach.events.index', ['events' => collect()]);
+        }
+
+        // Get TryOut events for the coach's sport only
+        $events = Event::with('sport')
+            ->where('removed', 0)
+            ->where('event_type', 'TryOut')
+            ->where('sport_id', $coach->sport_id)
+            ->get();
+
         return view('coach.events.index', compact('events'));
     }
 

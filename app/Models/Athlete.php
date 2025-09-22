@@ -32,6 +32,12 @@ class Athlete extends Model
         return $this->belongsTo(Sport::class, 'sport_id');
     }
 
+    public function coach()
+    {
+        // indirect via sport
+        return $this->hasOne(Coach::class, 'sport_id', 'sport_id');
+    }
+
     public function teams()
     {
         return $this->belongsToMany(Team::class, 'athlete_team', 'athlete_id', 'team_id');

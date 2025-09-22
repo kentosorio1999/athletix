@@ -28,4 +28,10 @@ class Performance extends Model
     {
         return $this->belongsTo(Event::class, 'event_id');
     }
+
+    public function awards()
+    {
+        return $this->hasMany(Award::class, 'event_id', 'event_id')
+            ->where('athlete_id', $this->athlete_id); // use the current model's athlete_id
+    }
 }

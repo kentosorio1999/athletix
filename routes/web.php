@@ -10,7 +10,8 @@ use App\Http\Controllers\{
     AttendanceController, NotificationController, StaffProfileController,
     StaffController, RegistrationApprovalController, AthleteController,
     StaffNotificationController, CoachDashboardController, CoachAttendancePerformanceController, 
-    CoachAthleteController, CoachController, CoachProfileController
+    CoachAthleteController, CoachController, CoachProfileController,
+    AwardController, CoachReportController, CoachNotificationController
 };
 
 // -----------------------------
@@ -202,7 +203,26 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/events/{event}/registrations', [CoachController::class, 'registrations'])->name('events.registrations');
         Route::post('/events/{event}/registrations/{athlete}/approve', [CoachController::class, 'approve'])->name('events.registrations.approve');
         Route::post('/events/{event}/registrations/{athlete}/reject', [CoachController::class, 'reject'])->name('events.registrations.reject');
-            
+        
+        //Awards
+        Route::resource('awards', \App\Http\Controllers\AwardController::class);
+
+        // Reports
+        Route::get('/reports/performance', [CoachReportController::class, 'performance'])
+            ->name('reports.performance');
+        Route::get('/reports/attendance', [CoachReportController::class, 'attendance'])
+            ->name('reports.attendance');
+        Route::get('/coach/{coachId}/athletes', [CoachReportController::class, 'coachAthletes'])
+            ->name('coach.athletes');
+
+        // For AJAX filtering
+        Route::post('/reports/filter', [CoachReportController::class, 'filter'])
+            ->name('reports.filter');
+
+        //notifications
+        Route::get('/coach/notifications', [CoachNotificationController::class, 'index'])->name('notifications.index');
+        Route::post('/coach/notifications/{id}/read', [CoachNotificationController::class, 'markAsRead'])->name('notifications.read');
+
         //Setting
         Route::get('/profile', [CoachProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [CoachProfileController::class, 'update'])->name('profile.update');

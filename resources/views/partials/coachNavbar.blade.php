@@ -92,20 +92,21 @@
         </a>
         <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Registrations</span>
     </div>
-
-    <!-- Deactivate Account -->
+  
+    <!-- Awards -->
     <div class="relative group">
-      <a href="{{ route('staff.athlete.deactivate') }}" 
+      <a href="{{ route('coach.awards.index') }}" 
         class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2L4 5v6c0 5 4 9 8 11 4-2 8-6 8-11V5l-8-3z"/>
+        <!-- Trophy icon -->
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17 3H7v2H4v2c0 2.76 2.24 5 5 5 .35 0 .69-.04 1.02-.1A7.002 7.002 0 0012 21a7.002 7.002 0 001.98-9.1c.33.06.67.1 1.02.1 2.76 0 5-2.24 5-5V5h-3V3zm-5 16c-1.66 0-3-1.34-3-3h6c0 1.66-1.34 3-3 3z"/>
         </svg>
-        @if (request()->routeIs('staff.athlete.deactivate'))
+        @if (request()->routeIs('coach.awards.*'))
           <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
         @endif
       </a>
       <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
-        Deactivate Account
+        Awards
       </span>
     </div>
 
@@ -140,26 +141,46 @@
     </span>
   </div>
 
+
 <!-- Reports -->
-<div class="relative group">
-  <a href="{{ route('reports') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
+<div id="reportsDropdown" class="relative">
+  <button onclick="toggleReportsDropdown()" 
+          class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center focus:outline-none relative">
     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
       <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
     </svg>
-    @if (request()->routeIs('reports'))
+    @if (request()->routeIs('coach.reports.performance') || request()->routeIs('coach.reports.attendance'))
       <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
     @endif
-  </a>
-  <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">Reports</span>
+  </button>
+
+  <!-- Dropdown -->
+  <div id="reportsMenu" 
+       class="hidden absolute left-14 top-1/2 -translate-y-1/2 bg-[#1E1E1E] text-white text-sm rounded-lg shadow-lg w-40 transition-all duration-200 ease-in-out">
+    <ul class="py-2">
+      <li>
+        <a href="{{ route('coach.reports.performance') }}" 
+           class="block px-4 py-2 hover:bg-[#3E1F0A] rounded-md transition {{ request()->routeIs('coach.reports.performance') ? 'bg-[#3E1F0A]' : '' }}">
+          📊 Performance
+        </a>
+      </li>
+      <li>
+        <a href="{{ route('coach.reports.attendance') }}" 
+           class="block px-4 py-2 hover:bg-[#3E1F0A] rounded-md transition {{ request()->routeIs('coach.reports.attendance') ? 'bg-[#3E1F0A]' : '' }}">
+          📝 Attendance
+        </a>
+      </li>
+    </ul>
+  </div>
 </div>
 
 <!-- Notifications -->
 <div class="relative group">
-  <a href="{{ route('staff.notifications.index') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
+  <a href="{{ route('coach.notifications.index') }}" class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
       <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
     </svg>
-    @if (request()->routeIs('staff.notifications.index'))
+    @if (request()->routeIs('coach.notifications.index'))
       <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
     @endif
   </a>
@@ -216,4 +237,25 @@
       sidebar.classList.toggle("-translate-x-full");
     });
   });
+</script>
+
+
+<script>
+function toggleReportsDropdown() {
+  const menu = document.getElementById('reportsMenu');
+  menu.classList.toggle('hidden');
+}
+document.addEventListener('click', function(event) {
+  const dropdown = document.getElementById('reportsDropdown');
+  if (!dropdown.contains(event.target)) {
+    document.getElementById('reportsMenu').classList.add('hidden');
+  }
+});
+</script>
+
+<script>
+function toggleReportsDropdown() {
+  let menu = document.getElementById('reportsMenu');
+  menu.classList.toggle('hidden');
+}
 </script>
