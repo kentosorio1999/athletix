@@ -87,13 +87,45 @@ class CoachController extends Controller
         return back()->with('success', 'Performance updated.');
     }
 
-    public function registrations(Event $event)
+    public function registrations(Request $request)
     {
-        $registrations = EventRegistration::with('athlete')
-            ->where('event_id', $event->event_id)
+        $coach = auth()->user()->coach;
+
+        // If no coach record is found, return empty
+        if (!$coach) {
+            return view('coach.events.registrations', [
+                'registrations' => collect(),
+                'sports' => collect(),
+                'heading' => 'No Sports Assigned'
+            ]);
+        }
+
+        // Get the coach's sport only
+        $sports = Sport::where('removed', 0)
+            ->where('sport_id', $coach->sport_id)
             ->get();
 
-        return view('coach.events.registrations', compact('event', 'registrations'));
+        $heading = "All Sports Events";
+
+        // Base query: only registrations under coach's sport
+        $query = EventRegistration::with(['athlete', 'event.sport'])
+            ->whereHas('event', function ($q) use ($coach) {
+                $q->where('sport_id', $coach->sport_id);
+            });
+
+        // If sport filter is selected
+        if ($request->filled('sport') && $request->sport !== 'all') {
+            $query->whereHas('event', function ($q) use ($request) {
+                $q->where('sport_id', $request->sport);
+            });
+
+            $sportName = Sport::find($request->sport)?->sport_name;
+            $heading = $sportName ? $sportName . " Events" : $heading;
+        }
+
+        $registrations = $query->get();
+
+        return view('coach.events.registrations', compact('registrations', 'sports', 'heading'));
     }
 
     public function approve(Event $event, Athlete $athlete)

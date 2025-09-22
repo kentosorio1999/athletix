@@ -199,11 +199,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/attendance', [CoachAttendancePerformanceController::class, 'index'])->name('attendance.index');
         Route::post('/attendance', [CoachAttendancePerformanceController::class, 'store'])->name('attendance.store');
     
-        // Registration approval
-        Route::get('/events/{event}/registrations', [CoachController::class, 'registrations'])->name('events.registrations');
-        Route::post('/events/{event}/registrations/{athlete}/approve', [CoachController::class, 'approve'])->name('events.registrations.approve');
-        Route::post('/events/{event}/registrations/{athlete}/reject', [CoachController::class, 'reject'])->name('events.registrations.reject');
-        
+        // Registrations index (all / filter by sport)
+        Route::get('/registrations', [CoachController::class, 'registrations'])->name('events.registrations');
+
+        // Approve / Reject keep using event + athlete
+        Route::post('/registrations/{event}/{athlete}/approve', [CoachController::class, 'approve'])->name('events.registrations.approve');
+        Route::post('/registrations/{event}/{athlete}/reject', [CoachController::class, 'reject'])->name('events.registrations.reject');
+
         //Awards
         Route::resource('awards', \App\Http\Controllers\AwardController::class);
 

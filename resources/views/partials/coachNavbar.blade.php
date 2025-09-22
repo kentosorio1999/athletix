@@ -82,7 +82,8 @@
 
     <!-- Registration Approval -->
     <div class="relative group">
-        <a href="{{ route('coach.events.registrations', ['event' => 1]) }}" class="w-12 h-12 mx-auto text-white hover:bg-[#4A230F] transition-colors flex items-center justify-center rounded">
+        <a href="{{ route('coach.events.registrations', ['sport' => 'all']) }}"
+          class="w-12 h-12 mx-auto text-white hover:bg-[#4A230F] transition-colors flex items-center justify-center rounded">
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 12l8-5H4l8 5zm0 2l-8-5v10h16v-10l-8 5z"/>
             </svg>
@@ -109,37 +110,6 @@
         Awards
       </span>
     </div>
-
-  <!--Athlete update -->
-  <div class="relative group">
-    <a href="{{ route('staff.athletes.index') }}" 
-      class="w-12 h-12 mx-auto text-white hover:bg-[#3E1F0A] transition-colors flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" 
-            class="w-6 h-6" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor" 
-            stroke-width="2">
-            <!-- User -->
-            <path stroke-linecap="round" stroke-linejoin="round" 
-                  d="M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" 
-                  d="M12 14c-4 0-6 2-6 4v2h6" />
-            <!-- Cog -->
-            <path stroke-linecap="round" stroke-linejoin="round" 
-                  d="M19.4 15a1.65 1.65 0 010 2l1.1 1.7a.5.5 0 01-.2.7l-2 .6a5.4 5.4 0 01-1.2.7l-.4 2.1a.5.5 0 01-.5.4h-2.4a.5.5 0 01-.5-.4l-.4-2.1a5.4 5.4 0 01-1.2-.7l-2-.6a.5.5 0 01-.2-.7l1.1-1.7a1.65 1.65 0 010-2l-1.1-1.7a.5.5 0 01.2-.7l2-.6a5.4 5.4 0 011.2-.7l.4-2.1a.5.5 0 01.5-.4h2.4a.5.5 0 01.5.4l.4 2.1a5.4 5.4 0 011.2.7l2 .6a.5.5 0 01.2.7L19.4 15z" />
-        </svg>
-
-        @if (request()->routeIs('staff.athletes.index'))
-            <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div>
-        @endif
-    </a>
-
-    <span class="absolute left-14 top-1/2 -translate-y-1/2 whitespace-nowrap 
-                bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
-        Manage Athletes
-    </span>
-  </div>
 
 
 <!-- Reports -->
