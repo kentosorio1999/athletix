@@ -42,10 +42,15 @@ class Event extends Model
                     ->withTimestamps();
     }
 
-    public function registrations() {
-        return $this->hasMany(EventRegistration::class, 'event_id');
+    public function registrations()
+    {
+        return $this->hasMany(EventRegistration::class, 'event_id', 'event_id');
     }
 
+    public function athleteEvents()
+    {
+        return $this->hasMany(AthleteEvent::class, 'event_id');
+    }
 
     protected $casts = [
         'event_date' => 'date',

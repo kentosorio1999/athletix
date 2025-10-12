@@ -11,7 +11,9 @@ use App\Http\Controllers\{
     StaffController, RegistrationApprovalController, AthleteController,
     StaffNotificationController, CoachDashboardController, CoachAttendancePerformanceController, 
     CoachAthleteController, CoachController, CoachProfileController,
-    AwardController, CoachReportController, CoachNotificationController
+    AwardController, CoachReportController, CoachNotificationController,
+    AthleteDashboardController, AthleteEventController, AthleteStatusController,
+    AthleteNotificationController, AthleteProfileController
 };
 
 // -----------------------------
@@ -92,9 +94,47 @@ Route::middleware(['auth'])->group(function () {
 
         // Reports
         Route::get('/reports', [ReportController::class, 'index'])->name('reports');
-        Route::get('/reports/export/{format}', [ReportController::class, 'export'])->name('reports.export');
-        Route::get('/reports/export-pdf', [ReportController::class, 'exportPDF'])->name('reports.exportPDF');
-    });
+       // Individual form exports
+        Route::get('/reports/export/{form}/{format}', [ReportController::class, 'exportForm'])
+            ->name('reports.export.form')
+            ->where('form', '[A-G]')
+            ->where('format', 'pdf|csv');
+
+        // Feedback submission
+        Route::post('/reports/save-feedback', [ReportController::class, 'saveFeedback'])
+            ->name('reports.save-feedback');
+
+        // Legacy routes (keep for backward compatibility)
+        Route::get('/reports/export/{format}', [ReportController::class, 'export'])
+            ->name('reports.export')
+            ->where('format', 'pdf|csv|xlsx');
+
+        Route::get('/reports/export-pdf', [ReportController::class, 'exportPDF'])
+            ->name('reports.export.pdf');
+        // Route::get('/reports/export/{format}', [ReportController::class, 'export'])->name('reports.export');
+        // Route::get('/reports/export-pdf', [ReportController::class, 'exportPDF'])->name('reports.exportPDF');
+        // // Individual form exports
+        // Route::get('/reports/export/{form}/{format}', [ReportController::class, 'exportForm'])
+        //     ->name('reports.export.form');
+
+        // // Save institutional data
+        Route::post('/reports/save-institutional', [ReportController::class, 'saveInstitutional'])
+            ->name('reports.save-institutional');
+
+        // // Save sports programs data  
+        Route::post('/reports/save-sports-programs', [ReportController::class, 'saveSportsPrograms'])
+            ->name('reports.save-sports-programs');
+
+        Route::post('/reports/save-budget-expenditure', [ReportController::class, 'saveBudgetExpenditure'])
+            ->name('reports.save-budget-expenditure');
+        
+        Route::post('/reports.save-student-athletes', [ReportController::class, 'saveBudgetExpenditure'])
+            ->name('reports.save-student-athletes');
+
+        Route::post('/reports.save-benefits', [ReportController::class, 'saveBudgetExpenditure'])
+            ->name('reports.save-benefits');
+       
+        });
 
     // -----------------------------
     // SuperAdmin Only
@@ -236,13 +276,33 @@ Route::middleware(['auth'])->group(function () {
     // -----------------------------
     // Athlete Only
     // -----------------------------
-    Route::middleware(['role:Athlete'])->prefix('athlete')->name('athlete.')->group(function() {
-        Route::get('/dashboard', [CoachDashboardController::class, 'index'])->name('dashboard.index');
+    Route::middleware(['role:Athlete'])
+        ->prefix('athlete')
+        ->name('athlete.')
+        ->group(function() {
 
-       // event registration
-       Route::post('/events/{id}/join', [EventRegistrationController::class, 'requestJoin'])
-        ->middleware(['auth', 'role:athlete'])
-        ->name('events.join');
+        // Athlete Dashboard
+        Route::get('/dashboard', [AthleteDashboardController::class, 'index'])->name('dashboard');
+
+        // Event registration
+        Route::post('/athlete/events/{event}/register', [AthleteEventController::class, 'register'])->name('events.register');
+        Route::delete('/athlete/events/{event}/unregister', [AthleteEventController::class, 'unregister'])->name('events.unregister');
+
+        // Events
+        Route::get('/events', [AthleteEventController::class, 'index'])->name('events.index');
+        Route::get('/history', [AthleteEventController::class, 'history'])->name('events.history');
+    
+    
+        // Status
+        Route::get('/status', [AthleteStatusController::class, 'index'])->name('status');
+
+        // Notifications
+        Route::get('/notifications', [AthleteNotificationController::class, 'index'])->name('notifications.index');
+        Route::post('/notifications/{id}/read', [AthleteNotificationController::class, 'markAsRead'])->name('notifications.read');
+
+        // Profile
+        Route::get('/profile/edit', [AthleteProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile/update', [AthleteProfileController::class, 'update'])->name('profile.update');
     });
 
 });

@@ -81,7 +81,7 @@ class AuthController extends Controller
                     break;
 
                 case 'Athlete':
-                    $redirectUrl = route('athlete.dashboard.index');
+                    $redirectUrl = route('athlete.dashboard');
                     break;
 
                 default:

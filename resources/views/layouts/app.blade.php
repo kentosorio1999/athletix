@@ -24,7 +24,7 @@
             @include('partials.coachNavbar')
         @endif
         @if(in_array('Athlete', $roles))
-            @include('partials.staffNavbar')
+            @include('partials.athleteNavbar')
         @endif
         <main class="flex-1 p-8 bg-white justify-items-between min-h-screen w-screen">
         <h2 class="text-2xl font-bold mb-6 shadow-lg p-6">Welcome, {{ auth()->user()->role }}</h2>
@@ -34,13 +34,12 @@
               @yield('title')
             </h1>
             @yield('header-actions')
-            <!-- <a href="index.html" class="text-brown-primary hover:underline">
-              ← Back to Control Panel
-            </a> -->
           </header>
             @yield('content')
         </main>
     </div>
+
+    <!-- ADD THIS LINE - Scripts section -->
+    @yield('scripts')
   </body>
 </html>
-<!-- <div class="absolute right-[-8px] top-0 h-full w-1 bg-white rounded-l"></div> -->

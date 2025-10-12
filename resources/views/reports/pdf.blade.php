@@ -1,87 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>CHED Athlete Report</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid black; padding: 6px; text-align: left; }
-        h2 { text-align: center; margin-bottom: 0; }
-        p { text-align: center; margin-top: 0; }
-        .summary { margin-top: 20px; }
-        .summary table { width: 50%; margin: auto; }
+        .header {
+            width: 100%;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .logo-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            height: 80px;
+        }
+        .institution-info {
+            text-align: center;
+            flex-grow: 1;
+        }
+        .institution-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0;
+        }
+        .institution-address {
+            font-size: 12px;
+            margin: 2px 0;
+            color: #666;
+        }
+        .form-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 15px 0;
+            text-decoration: underline;
+        }
+        .report-info {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
-    <h2>Cebu Technological University</h2>
-    <p>CHED Athlete Report - {{ now()->format('F Y') }}</p>
-
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Birthdate</th>
-                <th>Gender</th>
-                <th>Course/Year</th>
-                <th>Sport</th>
-                <th>Status</th>
-                <th>Awards</th>
-                <th>Created At</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($athletes as $athlete)
-                <tr>
-                    <td>{{ $athlete->school_id }}</td>
-                    <td>{{ $athlete->full_name }}</td>
-                    <td>{{ $athlete->birthdate }}</td>
-                    <td>{{ $athlete->gender }}</td>
-                    <td>
-                        {{ $athlete->section && $athlete->section->course ? $athlete->section->course->course_name : '-' }}
-                        / {{ $athlete->year_level }}
-                    </td>
-                    <td>{{ $athlete->sport->sport_name ?? '-' }}</td>
-                    <td>{{ ucfirst($athlete->conditions) }}</td>
-                    <td>{{ $athlete->awards->pluck('title')->join(', ') }}</td>
-                    <td>{{ $athlete->created_at->format('Y-m-d') }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-
-    <div class="summary">
-        <h3 style="text-align: center;">Consolidated Summary</h3>
-        <table>
-            <tr>
-                <th>Total Athletes</th>
-                <td>{{ $athletes->count() }}</td>
-            </tr>
-            <tr>
-                <th>Male Athletes</th>
-                <td>{{ $athletes->where('gender', 'Male')->count() }}</td>
-            </tr>
-            <tr>
-                <th>Female Athletes</th>
-                <td>{{ $athletes->where('gender', 'Female')->count() }}</td>
-            </tr>
-            <tr>
-                <th>By Sport</th>
-                <td>
-                    @foreach($athletes->groupBy(fn($a) => $a->sport->sport_name ?? 'N/A') as $sport => $group)
-                        {{ $sport }}: {{ $group->count() }}<br>
-                    @endforeach
-                </td>
-            </tr>
-            <tr>
-                <th>By Status</th>
-                <td>
-                    Active: {{ $athletes->where('conditions', 'active')->count() }}<br>
-                    Injured: {{ $athletes->where('conditions', 'injured')->count() }}<br>
-                    Graduate: {{ $athletes->where('conditions', 'graduate')->count() }}
-                </td>
-            </tr>
-        </table>
+    <div class="header">
+        <div class="logo-container">
+            <!-- CTU Logo on left -->
+            <div>
+                @if(file_exists(public_path('images/ctu-logo.png')))
+                    <img src="{{ public_path('images/ctu-logo.png') }}" class="logo" alt="CTU Logo">
+                @else
+                    <div style="width: 80px; height: 80px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; font-size: 10px;">
+                        CTU LOGO
+                    </div>
+                @endif
+            </div>
+            
+            <!-- Institution Info in center -->
+            <div class="institution-info">
+                <p class="institution-name">Cebu Technological University</p>
+                <p class="institution-address">M.J. Cuenco Ave, Cor R. Palma Street, Cebu City, 6000 Cebu</p>
+                <p class="institution-address">Main Campus</p>
+            </div>
+            
+            <!-- CHED Logo on right -->
+            <div>
+                @if(file_exists(public_path('images/ched-logo.png')))
+                    <img src="{{ public_path('images/ched-logo.png') }}" class="logo" alt="CHED Logo">
+                @else
+                    <div style="width: 80px; height: 80px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; font-size: 10px;">
+                        CHED LOGO
+                    </div>
+                @endif
+            </div>
+        </div>
+        
+        <div class="form-title">
+            {{ $formTitle ?? 'CHED REPORT' }}
+        </div>
+        
+        <div class="report-info">
+            Generated on: {{ date('F j, Y') }} | HEI: {{ $institutionalData['hei_name'] ?? 'Not specified' }}
+        </div>
     </div>
 </body>
 </html>

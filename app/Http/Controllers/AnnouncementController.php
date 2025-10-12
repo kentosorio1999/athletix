@@ -13,14 +13,21 @@ class AnnouncementController extends Controller
      */
     public function index()
     {
-        // Fetch only announcements that are not removed
-        $announcements = Announcement::where('removed', 0)
+        $userRole = Auth::user()->role;
+
+        $announcements = Announcement::with(['poster', 'sport', 'section']) // ✅ eager load
+            ->where('removed', 0)
+            ->when($userRole !== 'SuperAdmin', function ($query) use ($userRole) {
+                $query->where(function ($q) use ($userRole) {
+                    $q->where('target', $userRole)
+                    ->orWhere('target', 'All');
+                });
+            })
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         return view('announcements.index', compact('announcements'));
     }
-
     /**
      * Store a newly created announcement.
      */

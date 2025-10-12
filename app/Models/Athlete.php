@@ -11,16 +11,32 @@ class Athlete extends Model
 
     protected $primaryKey = 'athlete_id';
     protected $fillable = [
-        'full_name',
-        'birthdate',
-        'gender',
-        'year_level',
-        'section_id',
-        'sport_id',
-        'user_id',
-        'school_id',
-        'removed'
+        'full_name', 'age', 'profile_url', 'birthdate', 'gender', 'academic_course',
+        'highest_competition_level', 'highest_accomplishment', 'international_competition_name',
+        'training_seminars_regional', 'training_seminars_national', 'training_seminars_international',
+        'training_frequency_days', 'training_hours_per_day', 'scholarship_status',
+        'monthly_living_allowance', 'board_lodging_support', 'medical_insurance_support',
+        'training_uniforms_support', 'average_tournament_allowance', 'playing_uniforms_sponsorship',
+        'playing_gears_sponsorship', 'excused_from_academic_obligations', 'flexible_academic_schedule',
+        'academic_tutorials_support', 'year_level', 'section_id', 'sport_id', 'user_id',
+        'status', 'conditions', 'school_id', 'removed'
     ];
+
+    protected $casts = [
+        'birthdate' => 'date',
+        'training_seminars_regional' => 'boolean',
+        'training_seminars_national' => 'boolean',
+        'training_seminars_international' => 'boolean',
+        'board_lodging_support' => 'boolean',
+        'medical_insurance_support' => 'boolean',
+        'training_uniforms_support' => 'boolean',
+        'playing_uniforms_sponsorship' => 'boolean',
+        'playing_gears_sponsorship' => 'boolean',
+        'excused_from_academic_obligations' => 'boolean',
+        'flexible_academic_schedule' => 'boolean',
+        'academic_tutorials_support' => 'boolean',
+    ];
+
 
     public function section()
     {
@@ -34,7 +50,6 @@ class Athlete extends Model
 
     public function coach()
     {
-        // indirect via sport
         return $this->hasOne(Coach::class, 'sport_id', 'sport_id');
     }
 
@@ -61,31 +76,30 @@ class Athlete extends Model
 
     public function attendances()
     {
-        return $this->hasMany(Attendance::class, 'athlete_id');
+        return $this->hasMany(Attendance::class, 'athlete_id', 'athlete_id');
     }
 
     public function performances()
     {
-        return $this->hasMany(Performance::class, 'athlete_id');
+        return $this->hasMany(Performance::class, 'athlete_id', 'athlete_id');
     }
 
     public function awards()
     {
-        // Explicitly specify the foreign key name if it’s not the default
-        return $this->hasMany(Award::class, 'athlete_id');
+        return $this->hasMany(Award::class, 'athlete_id', 'athlete_id');
     }
 
-    public function eventRegistrations() {
-        return $this->hasMany(EventRegistration::class, 'athlete_id');
+    public function eventRegistrations()
+    {
+        return $this->hasMany(EventRegistration::class, 'athlete_id', 'athlete_id');
     }
 
     public function getProfileUrlAttribute($value)
     {
         if ($value) {
-            return $value; // Use uploaded image if exists
+            return $value;
         }
 
-        // Determine default image based on gender
         switch (strtolower($this->gender)) {
             case 'male':
                 return asset('images/default_male.jpg');
@@ -96,12 +110,14 @@ class Athlete extends Model
         }
     }
 
-        // Helper methods
-    public function attendanceForEvent($eventId) {
-        return $this->attendance()->where('event_id', $eventId)->first();
+    // ✅ Corrected helper methods
+    public function attendanceForEvent($eventId)
+    {
+        return $this->attendances()->where('event_id', $eventId)->first();
     }
 
-    public function performanceForEvent($eventId) {
-        return $this->performance()->where('event_id', $eventId)->first();
+    public function performanceForEvent($eventId)
+    {
+        return $this->performances()->where('event_id', $eventId)->first();
     }
 }
