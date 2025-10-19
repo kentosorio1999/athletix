@@ -1,83 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8">
+    <title>CHED FORM C: Student Athletes</title>
     <style>
-        /* Same header styles */
-        .header { width: 100%; border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
-        .logo-container { display: flex; justify-content: space-between; align-items: center; }
-        .logo { height: 80px; }
-        .institution-info { text-align: center; flex-grow: 1; }
-        .institution-name { font-size: 16px; font-weight: bold; margin: 0; }
-        .institution-address { font-size: 12px; margin: 2px 0; color: #666; }
-        .form-title { text-align: center; font-size: 18px; font-weight: bold; margin: 15px 0; text-decoration: underline; }
-        .report-info { text-align: center; font-size: 12px; color: #666; margin-bottom: 20px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 10px; }
-        th, td { border: 1px solid #ddd; padding: 6px; text-align: left; }
-        th { background-color: #f5f5f5; font-weight: bold; }
-        .summary { margin-bottom: 15px; font-weight: bold; }
+        body { font-family: Arial, sans-serif; font-size: 8px; line-height: 1.1; }
+        .header { text-align: center; margin-bottom: 10px; border-bottom: 2px solid #333; padding-bottom: 5px; }
+        .logo-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .generated-on { text-align: right; font-style: italic; margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 5px; }
+        th, td { border: 1px solid #ddd; padding: 3px; text-align: left; }
+        th { background-color: #f5f5f5; font-weight: bold; text-align: center; }
     </style>
 </head>
 <body>
-    <!-- Header Section -->
     <div class="header">
-        <div class="logo-container">
-            <div>CTU LOGO</div>
-            <div class="institution-info">
-                <p class="institution-name">Cebu Technological University</p>
-                <p class="institution-address">M.J. Cuenco Ave, Cor R. Palma Street, Cebu City, 6000 Cebu</p>
-                <p class="institution-address">Main Campus</p>
+        <div class="logo-section">
+            <div style="text-align: left; width: 30%;">
+                <img src="{{ public_path('images/ctu-logo.png') }}" style="height: 60px;" alt="CTU Logo">
             </div>
-            <div>CHED LOGO</div>
-        </div>
-        
-        <div class="form-title">FORM C: STUDENT-ATHLETES INFORMATION</div>
-        <div class="report-info">
-            Generated on: {{ date('F j, Y') }} | HEI: {{ $institutionalData['hei_name'] ?? 'Cebu Technological University' }} | Total Records: {{ $athletes->count() }}
+            <div style="text-align: center; width: 40%;">
+                <h2 style="margin: 0; color: #333;">CHED FORM A: INSTITUTIONAL INFORMATION</h2>
+                <p style="margin: 5px 0 0 0; font-size: 11px; color: #666;">Commission on Higher Education</p>
+            </div>
+            <div style="text-align: right; width: 30%;">
+                <img src="{{ public_path('images/ched-logo.png') }}" style="height: 60px;" alt="CHED Logo">
+            </div>
         </div>
     </div>
 
-    <!-- Form C Content -->
-    <div class="content">
-        <div class="summary">Total Athletes: {{ $athletes->count() }}</div>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Sports Program</th>
-                    <th>Gender</th>
-                    <th>Academic Course</th>
-                    <th>Year Level</th>
-                    <th>Competition Level</th>
-                    <th>Scholarship Status</th>
-                    <th>Monthly Allowance</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($athletes as $athlete)
-                <tr>
-                    <td>{{ $athlete->full_name }}</td>
-                    <td>{{ $athlete->age ?? '-' }}</td>
-                    <td>{{ $athlete->sport->sport_name ?? '-' }}</td>
-                    <td>{{ $athlete->gender ?? '-' }}</td>
-                    <td>{{ $athlete->academic_course ?? '-' }}</td>
-                    <td>{{ $athlete->year_level }}</td>
-                    <td>{{ $athlete->highest_competition_level ?? '-' }}</td>
-                    <td>{{ $athlete->scholarship_status ?? 'None' }}</td>
-                    <td>
-                        @if($athlete->monthly_living_allowance)
-                            ₱{{ number_format($athlete->monthly_living_allowance, 2) }}
-                        @else
-                            -
-                        @endif
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+    <div class="generated-on">Generated on: {{ $generatedOn }} | HEI: {{ $institutionalData->hei_name ?? '' }}</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th><th>Name</th><th>Age</th><th>Sport</th><th>Gender</th><th>Course</th>
+                <th>Competition Level</th><th>Accomplishment</th><th>International Comp</th>
+                <th>Regional Training</th><th>National Training</th><th>International Training</th>
+                <th>Training Days</th><th>Hours/Day</th><th>Scholarship</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($athletes as $index => $athlete)
+            <tr>
+                <td>{{ $index + 1 }}</td>
+                <td>{{ $athlete->full_name }}</td>
+                <td>{{ $athlete->age }}</td>
+                <td>{{ $athlete->sport->sport_name ?? '' }}</td>
+                <td>{{ ucfirst($athlete->gender) }}</td>
+                <td>{{ $athlete->academic_course }}</td>
+                <td>{{ $athlete->highest_competition_level }}</td>
+                <td>{{ $athlete->highest_accomplishment }}</td>
+                <td>{{ $athlete->international_competition_name }}</td>
+                <td>{{ $athlete->training_seminars_regional ? 'Yes' : 'No' }}</td>
+                <td>{{ $athlete->training_seminars_national ? 'Yes' : 'No' }}</td>
+                <td>{{ $athlete->training_seminars_international ? 'Yes' : 'No' }}</td>
+                <td>{{ $athlete->training_frequency_days }}</td>
+                <td>{{ $athlete->training_hours_per_day }}</td>
+                <td>{{ $athlete->scholarship_status }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
 </body>
 </html>

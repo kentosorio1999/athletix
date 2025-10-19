@@ -16,7 +16,7 @@
 
         <form id="otp-form" method="POST" action="{{ route('verify.otp') }}" class="flex flex-col gap-4">
             @csrf
-            <input type="hidden" name="user_id" value="{{ $user_id }}">
+            <input type="hidden" name="pending_id" value="{{ $pending_id }}">
 
             <div class="flex items-center border border-[#8c2c08] rounded px-2">
                 <input
@@ -74,7 +74,7 @@
             });
         });
         document.getElementById('resend-otp-btn').addEventListener('click', function () {
-            let userId = document.querySelector('input[name="user_id"]').value;
+            let pendingId = document.querySelector('input[name="pending_id"]').value;
 
             fetch("{{ route('resend.otp') }}", {
                 method: 'POST',
@@ -83,7 +83,7 @@
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ user_id: userId })
+                body: JSON.stringify({ pending_id: pendingId })
             })
             .then(response => response.json())
             .then(data => {

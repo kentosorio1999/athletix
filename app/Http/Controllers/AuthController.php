@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\OtpMail;
 use App\Models\Notification;
+use App\Models\Athlete;
+use thiagoalessio\TesseractOCR\TesseractOCR;
 
 class AuthController extends Controller
 {
@@ -17,41 +19,41 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'username' => 'required|email|unique:users,username',
-            'password' => 'required|string|min:6|confirmed',
+            'full_name' => 'required|string|max:255',
+            'school_id' => 'required|string|max:50',
+            'username'  => 'required|email|unique:users,username|unique:pending_registrations,username',
+            'password'  => 'required|string|min:6|confirmed',
         ]);
 
-        // 1. Save the new user
-        $user = User::create([
-            'username' => $request->username,
-            'password' => Hash::make($request->password),
-        ]);
-
-        // Notify Super Admins
-        $this->notifySuperAdmins('New User Registered', "A new user registered: {$user->username}");
-
-        // 2. Generate OTP
+        // Generate OTP
         $otp = rand(100000, 999999);
 
-        // 3. Store OTP
-        DB::table('otps')->insert([
-            'user_id'    => $user->user_id,
-            'otp'        => $otp,
-            'expires_at' => now()->addMinutes(10),
-            'created_at' => now(),
-            'updated_at' => now(),
+        // Hash password for security
+        $hashedPassword = Hash::make($request->password);
+
+        // Store pending registration
+        $pendingId = DB::table('pending_registrations')->insertGetId([
+            'full_name'   => $request->full_name,
+            'school_id'   => $request->school_id,
+            'username'    => $request->username,
+            'password'    => $hashedPassword,
+            'otp'         => $otp,
+            'expires_at'  => now()->addMinutes(10),
+            'created_at'  => now(),
+            'updated_at'  => now(),
         ]);
 
-        // 4. Send OTP via email
-        Mail::to($user->username)->send(new OtpMail($otp));
+        // Send OTP via email
+        Mail::to($request->username)->send(new OtpMail($otp));
 
+        // ✅ Return JSON response with pending ID (for OTP verification page)
         return response()->json([
             'success' => true,
-            'message' => 'Registration successful. Please verify OTP sent to your email.',
-            'user_id' => $user->user_id,
-            'redirect_url' => route('verify.otp.page', ['user_id' => $user->user_id])
+            'message' => 'OTP sent to your email. Please verify to complete registration.',
+            'redirect_url' => route('verify.otp.page', ['pending_id' => $pendingId])
         ]);
     }
+
 
     // Login user
     public function login(Request $request)
@@ -64,6 +66,24 @@ class AuthController extends Controller
         $user = User::where('username', $request->username)->first();
 
         if ($user && Hash::check($request->password, $user->password)) {
+            
+            // Check if athlete is rejected
+            if ($user->role === 'Athlete' && $user->athlete && $user->athlete->status === 'rejected') {
+                // Failed login notification for rejected athlete
+                $this->notifySuperAdmins(
+                    'Rejected Athlete Login Attempt',
+                    "Rejected athlete attempted to login with username: {$request->username}",
+                    'warning'
+                );
+
+                return response()->json([
+                    'success' => false,
+                    'errors' => [
+                        'username' => ['Your account has been rejected. Please contact administrator.'],
+                    ]
+                ]);
+            }
+
             Auth::login($user);
 
             // Redirect URL based on role
@@ -113,73 +133,89 @@ class AuthController extends Controller
     public function verifyOtp(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,user_id',
-            'otp' => 'required|numeric',
+            'pending_id' => 'required|integer',
+            'otp'        => 'required|digits:6',
         ]);
 
-        $record = DB::table('otps')
-            ->where('user_id', $request->user_id)
+        $pending = DB::table('pending_registrations')
+            ->where('id', $request->pending_id)
             ->where('otp', $request->otp)
             ->where('expires_at', '>', now())
             ->first();
 
-        if (!$record) {
+        if (!$pending) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid or expired OTP.'
-            ]);
+                'message' => 'Invalid or expired OTP.',
+            ], 400);
         }
 
-        DB::table('users')->where('user_id', $request->user_id)->update(['status' => 'active']);
-        DB::table('otps')->where('user_id', $request->user_id)->delete();
+        // ✅ Create user
+        $user = User::create([
+            'username' => $pending->username,
+            'password' => $pending->password,
+            'role' => 'Athlete'
+        ]);
 
-        // OTP verified notification
-        $this->notifySuperAdmins('OTP Verified', "User ID {$request->user_id} has successfully verified their OTP.");
+        // ✅ Create athlete record
+        Athlete::create([
+            'user_id'   => $user->user_id,
+            'full_name' => $pending->full_name,
+            'school_id' => $pending->school_id,
+            'status'    => 'pending',
+            'removed'   => 0,
+        ]);
+
+        // ✅ Delete pending record
+        DB::table('pending_registrations')->where('id', $pending->id)->delete();
+
+        // ✅ Notify SuperAdmins
+        $this->notifySuperAdmins('New Athlete Registered', "A new athlete verified registration: {$user->username}");
 
         return response()->json([
             'success' => true,
-            'message' => 'OTP verified successfully!',
-            'redirect_url' => route('dashboard')
+            'message' => 'OTP verified successfully. Registration completed.',
+            'redirect_url' => route('login'),
         ]);
     }
 
+
+
     // Show OTP page
-    public function showOtpPage($user_id)
+    public function showOtpPage($pending_id)
     {
-        return view('auth.verify-otp', compact('user_id'));
+        return view('auth.verify-otp', compact('pending_id'));
     }
 
     // Resend OTP
-    public function resendOtp(Request $request)
+   public function resendOtp(Request $request)
     {
-        $user = User::find($request->user_id);
+        $request->validate(['pending_id' => 'required|integer']);
 
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'User not found']);
+        $pending = DB::table('pending_registrations')->where('id', $request->pending_id)->first();
+
+        if (!$pending) {
+            return response()->json(['success' => false, 'message' => 'Pending registration not found']);
         }
 
         $otp = rand(100000, 999999);
 
-        DB::table('otps')->updateOrInsert(
-            ['user_id' => $user->user_id],
-            [
-                'otp'        => $otp,
+        DB::table('pending_registrations')
+            ->where('id', $pending->id)
+            ->update([
+                'otp' => $otp,
                 'expires_at' => now()->addMinutes(10),
                 'updated_at' => now(),
-                'created_at' => now(),
-            ]
-        );
+            ]);
 
-        Mail::to($user->username)->send(new OtpMail($otp));
-
-        // OTP resend notification
-        $this->notifySuperAdmins('OTP Resent', "A new OTP has been sent to user: {$user->username}");
+        Mail::to($pending->username)->send(new OtpMail($otp));
 
         return response()->json([
             'success' => true,
-            'message' => 'A new OTP has been sent!'
+            'message' => 'A new OTP has been sent to your email.'
         ]);
     }
+
 
     // Helper function to notify all Super Admins
     protected function notifySuperAdmins($title, $message, $type = 'info')
@@ -194,5 +230,39 @@ class AuthController extends Controller
                 'user_id' => $admin->user_id,
             ]);
         }
+    }
+
+    public function ocrExtract(Request $request)
+    {
+        $request->validate([
+            'school_id_image' => 'required|image|mimes:jpg,jpeg,png|max:5120',
+        ]);
+
+        // Store temporarily
+        $path = $request->file('school_id_image')->store('ocr_uploads', 'public');
+        $fullPath = storage_path('app/public/' . $path);
+
+        // Run OCR
+        $text = (new TesseractOCR($fullPath))
+            ->lang('eng')
+            ->run();
+
+        // Debug: check raw output
+        // Log::info($text);
+
+        // Try to detect name, course, and ID number
+        // Common pattern: NAME (all caps) followed by course like BSMX-E, BSIT, BSED, etc.
+        preg_match('/([A-Z\s]+)\s+(BS[A-Z\-]+)/i', $text, $nameMatch);
+        preg_match('/ID\s*No[:\s]*([A-Z0-9\-]+)/i', $text, $idMatch);
+
+        $name = isset($nameMatch[1]) ? trim($nameMatch[1]) : 'Not Detected';
+        $idNumber = isset($idMatch[1]) ? trim($idMatch[1]) : 'Not Detected';
+
+        return response()->json([
+            'success' => true,
+            'extracted_text' => $text,
+            'full_name' => $name,
+            'school_id' => $idNumber,
+        ]);
     }
 }

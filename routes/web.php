@@ -24,9 +24,10 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
 
 // OTP
-Route::get('/verify-otp/{user_id}', [AuthController::class, 'showOtpPage'])->name('verify.otp.page');
+Route::get('/verify-otp/{pending_id}', [AuthController::class, 'showOtpPage'])->name('verify.otp.page');
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.otp');
 Route::post('/resend-otp', [AuthController::class, 'resendOtp'])->name('resend.otp');
+Route::post('/ocr-extract', [AuthController::class, 'ocrExtract'])->name('ocr.extract');
 
 // Logout
 Route::post('/logout', function () {
@@ -133,8 +134,24 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/reports.save-benefits', [ReportController::class, 'saveBudgetExpenditure'])
             ->name('reports.save-benefits');
-       
-        });
+
+        Route::post('/reports.save-sports-personnel', [ReportController::class, 'saveBudgetExpenditure'])
+            ->name('reports.save-sports-personnel');
+
+        Route::get('/reports/export/{form}/{format}', [ReportController::class, 'exportForm'])->name('reports.export-form');
+        // Route::post('/reports/save-institutional', [ReportController::class, 'saveInstitutional'])->name('reports.save-institutional');
+        // Route::post('/reports/save-budget-expenditure', [ReportController::class, 'saveBudgetExpenditure'])->name('reports.save-budget-expenditure');
+        // Route::post('/reports/save-feedback', [ReportController::class, 'saveFeedback'])->name('reports.save-feedback');
+         
+        //Route::get('/reports', [ReportController::class, 'index'])->name('reports');
+        //Route::post('/reports/save-institutional', [ReportController::class, 'saveInstitutional'])->name('reports.save-institutional');
+       // Route::post('/reports/save-sports-programs', [ReportController::class, 'saveSportsPrograms'])->name('reports.save-sports-programs');
+        //Route::post('/reports/save-student-athletes', [ReportController::class, 'saveStudentAthletes'])->name('reports.save-student-athletes');
+        //Route::post('/reports/save-sports-personnel', [ReportController::class, 'saveSportsPersonnel'])->name('reports.save-sports-personnel');
+        //Route::post('/reports/save-budget-expenditure', [ReportController::class, 'saveBudgetExpenditure'])->name('reports.save-budget-expenditure');
+        //Route::post('/reports/save-feedback', [ReportController::class, 'saveFeedback'])->name('reports.save-feedback');
+        //Route::get('/reports/export-form/{form}/{format}', [ReportController::class, 'exportForm'])->name('reports.export-form');
+    });
 
     // -----------------------------
     // SuperAdmin Only

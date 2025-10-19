@@ -97,8 +97,45 @@
                 <h2 class="text-xl font-semibold text-[#8c2c08] mb-6 text-center">
                   Sign-Up
                 </h2>
-                <form id="signup-form" method="POST" action="{{ route('register') }}" class="flex flex-col gap-4">
+
+                <form id="signup-form" method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="flex flex-col gap-4">
                   @csrf
+
+                  <!-- School ID Upload + OCR -->
+                  <div class="flex flex-col border border-[#8c2c08] rounded px-2 py-2">
+                    <label class="text-sm text-gray-700 font-semibold mb-1">Upload CTU School ID</label>
+                    <input type="file" id="school_id_image" name="school_id_image" accept="image/*" required />
+                    <button type="button" id="scanOCR"
+                      class="mt-2 bg-[#8c2c08] text-white py-1 rounded hover:bg-[#7a2507] transition">
+                      📷 Scan ID
+                    </button>
+                    <p id="ocr-status" class="text-xs text-gray-600 mt-1"></p>
+                  </div>
+
+                  <!-- Full Name -->
+                  <div class="flex items-center border border-[#8c2c08] rounded px-2">
+                    <input
+                      type="text"
+                      id="full_name"
+                      name="full_name"
+                      placeholder="Full Name"
+                      required
+                      class="flex-1 px-2 py-2 text-sm text-[#8c2c08] bg-transparent outline-none"
+                    />
+                  </div>
+
+                  <!-- School ID -->
+                  <div class="flex items-center border border-[#8c2c08] rounded px-2">
+                    <input
+                      type="text"
+                      id="school_id"
+                      name="school_id"
+                      placeholder="School ID"
+                      required
+                      class="flex-1 px-2 py-2 text-sm text-[#8c2c08] bg-transparent outline-none"
+                    />
+                  </div>
+
                   <!-- Email -->
                   <div class="flex items-center border border-[#8c2c08] rounded px-2">
                     <input
@@ -139,12 +176,14 @@
                   >
                     Sign-Up
                   </button>
+
                   <p class="text-sm text-center text-gray-600 mt-2">
                     Already have an account?
                     <a href="#" id="showLogin" class="text-[#8c2c08] font-semibold hover:underline">Log-In</a>
                   </p>
                 </form>
               </div>
+
             </div>
           </div>
         </section>
@@ -234,5 +273,46 @@
       });
   });
   </script>
+  <script>
+document.getElementById('scanOCR').addEventListener('click', function () {
+  const fileInput = document.getElementById('school_id_image');
+  const status = document.getElementById('ocr-status');
+  const fullName = document.getElementById('full_name');
+  const schoolId = document.getElementById('school_id');
+
+  if (!fileInput.files.length) {
+    alert('Please upload your CTU ID image first.');
+    return;
+  }
+
+  status.innerText = '🔍 Scanning ID... please wait.';
+
+  const formData = new FormData();
+  formData.append('school_id_image', fileInput.files[0]);
+
+  fetch("{{ route('ocr.extract') }}", {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+      'Accept': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      fullName.value = data.full_name !== 'Not Detected' ? data.full_name : '';
+      schoolId.value = data.school_id !== 'Not Detected' ? data.school_id : '';
+      status.innerText = '✅ OCR complete! Verify your info below.';
+    } else {
+      status.innerText = '❌ OCR failed: ' + data.message;
+    }
+  })
+  .catch(error => {
+    console.error('OCR Error:', error);
+    status.innerText = '❌ Error during OCR.';
+  });
+});
+</script>
   </body>
 </html>

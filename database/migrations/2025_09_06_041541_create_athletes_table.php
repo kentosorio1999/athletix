@@ -19,17 +19,19 @@ return new class extends Migration
             $table->enum('gender', ['Male','Female','Other'])->nullable();
             $table->enum('year_level', ['1st Year','2nd Year','3rd Year','4th Year','Alumni'])->default('1st Year');
 
-            $table->unsignedBigInteger('section_id');
-            $table->unsignedBigInteger('sport_id');
+            // FIX: Make ALL foreign keys nullable if using onDelete('set null')
+            $table->unsignedBigInteger('section_id')->nullable();
+            $table->unsignedBigInteger('sport_id')->nullable(); // Changed to nullable
             $table->unsignedBigInteger('user_id')->nullable();
+            
             $table->enum('status', ['pending', 'in review','approved','reject', 'inactive'])->default('pending');
             $table->enum('conditions', ['active', 'injured','graduate'])->default('active');
             $table->string('school_id');
             $table->integer('removed')->default(0)->index();
             $table->timestamps();
 
-            $table->foreign('section_id')->references('section_id')->on('sections')->onDelete('cascade');
-            $table->foreign('sport_id')->references('sport_id')->on('sports')->onDelete('cascade');
+            $table->foreign('section_id')->references('section_id')->on('sections')->onDelete('set null');
+            $table->foreign('sport_id')->references('sport_id')->on('sports')->onDelete('set null');
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('set null');
 
             $table->index('section_id');
