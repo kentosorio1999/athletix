@@ -33,7 +33,7 @@
     <!-- Export Button -->
     <button id="export-attendance" 
         class="mt-4 bg-green-600 text-white px-4 py-2 rounded">
-        Export CSV
+        Export XLSX
     </button>
 
     <!-- Results Table -->
@@ -79,27 +79,31 @@ document.getElementById('attendance-filter').addEventListener('submit', function
         });
     });
 });
-</script>
 
-<script>
-// Export Attendance CSV
+// Export Attendance XLSX
 document.getElementById('export-attendance').addEventListener('click', function () {
-    let table = document.getElementById('attendance-table');
-    let rows = table.querySelectorAll('tr');
-    let csv = [];
-
-    rows.forEach(row => {
-        let cols = row.querySelectorAll('th, td');
-        let rowData = [];
-        cols.forEach(col => rowData.push(`"${col.innerText}"`));
-        csv.push(rowData.join(","));
+    let formData = new FormData(document.getElementById('attendance-filter'));
+    
+    fetch("{{ route('coach.reports.export-attendance') }}", {
+        method: "POST",
+        headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+        body: formData
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'attendance_report.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error exporting attendance report. Please try again.');
     });
-
-    let blob = new Blob([csv.join("\n")], { type: "text/csv" });
-    let link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "attendance_report.csv";
-    link.click();
 });
 </script>
 @endsection

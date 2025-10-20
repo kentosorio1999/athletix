@@ -53,3 +53,12 @@ You should see something like:
 
 tesseract 5.3.0
 composer require thiagoalessio/tesseract_ocr
+
+
+
+
+ran Command
+php artisan serve
+
+another terminal
+php artisan queue:work // para sa email

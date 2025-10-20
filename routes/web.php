@@ -112,11 +112,6 @@ Route::middleware(['auth'])->group(function () {
 
         Route::get('/reports/export-pdf', [ReportController::class, 'exportPDF'])
             ->name('reports.export.pdf');
-        // Route::get('/reports/export/{format}', [ReportController::class, 'export'])->name('reports.export');
-        // Route::get('/reports/export-pdf', [ReportController::class, 'exportPDF'])->name('reports.exportPDF');
-        // // Individual form exports
-        // Route::get('/reports/export/{form}/{format}', [ReportController::class, 'exportForm'])
-        //     ->name('reports.export.form');
 
         // // Save institutional data
         Route::post('/reports/save-institutional', [ReportController::class, 'saveInstitutional'])
@@ -139,18 +134,7 @@ Route::middleware(['auth'])->group(function () {
             ->name('reports.save-sports-personnel');
 
         Route::get('/reports/export/{form}/{format}', [ReportController::class, 'exportForm'])->name('reports.export-form');
-        // Route::post('/reports/save-institutional', [ReportController::class, 'saveInstitutional'])->name('reports.save-institutional');
-        // Route::post('/reports/save-budget-expenditure', [ReportController::class, 'saveBudgetExpenditure'])->name('reports.save-budget-expenditure');
-        // Route::post('/reports/save-feedback', [ReportController::class, 'saveFeedback'])->name('reports.save-feedback');
-         
-        //Route::get('/reports', [ReportController::class, 'index'])->name('reports');
-        //Route::post('/reports/save-institutional', [ReportController::class, 'saveInstitutional'])->name('reports.save-institutional');
-       // Route::post('/reports/save-sports-programs', [ReportController::class, 'saveSportsPrograms'])->name('reports.save-sports-programs');
-        //Route::post('/reports/save-student-athletes', [ReportController::class, 'saveStudentAthletes'])->name('reports.save-student-athletes');
-        //Route::post('/reports/save-sports-personnel', [ReportController::class, 'saveSportsPersonnel'])->name('reports.save-sports-personnel');
-        //Route::post('/reports/save-budget-expenditure', [ReportController::class, 'saveBudgetExpenditure'])->name('reports.save-budget-expenditure');
-        //Route::post('/reports/save-feedback', [ReportController::class, 'saveFeedback'])->name('reports.save-feedback');
-        //Route::get('/reports/export-form/{form}/{format}', [ReportController::class, 'exportForm'])->name('reports.export-form');
+        
     });
 
     // -----------------------------
@@ -264,7 +248,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/registrations/{event}/{athlete}/reject', [CoachController::class, 'reject'])->name('events.registrations.reject');
 
         //Awards
-        Route::resource('awards', \App\Http\Controllers\AwardController::class);
+        Route::resource('awards', AwardController::class);
 
         // Reports
         Route::get('/reports/performance', [CoachReportController::class, 'performance'])
@@ -273,6 +257,12 @@ Route::middleware(['auth'])->group(function () {
             ->name('reports.attendance');
         Route::get('/coach/{coachId}/athletes', [CoachReportController::class, 'coachAthletes'])
             ->name('coach.athletes');
+        
+        // Add these export routes:
+        Route::post('/reports/export-performance', [CoachReportController::class, 'exportPerformanceXLSX'])
+            ->name('reports.export-performance');
+        Route::post('/reports/export-attendance', [CoachReportController::class, 'exportAttendanceXLSX'])
+            ->name('reports.export-attendance');
 
         // For AJAX filtering
         Route::post('/reports/filter', [CoachReportController::class, 'filter'])
