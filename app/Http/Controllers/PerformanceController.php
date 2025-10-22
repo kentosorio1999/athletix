@@ -34,8 +34,8 @@ class PerformanceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'athlete_id' => 'required|exists:athlete,athlete_id',
-            'event_id' => 'required|exists:event,event_id',
+        'athlete_id' => 'required|exists:' . (new Athlete)->getTable() . ',athlete_id',
+            'event_id'   => 'required|exists:' . (new Event)->getTable() . ',event_id',
             'score' => 'required|numeric|min:0|max:100',
             'remarks' => 'nullable|string',
         ]);

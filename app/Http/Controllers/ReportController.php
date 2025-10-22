@@ -261,7 +261,7 @@ class ReportController extends Controller
             $budgetData = BudgetExpenditure::firstOrNew([]);
             
             // Set default values for institutional data
-            $budgetData->hei_name = 'Cebu Technological University - Consolacion Campus';
+            $budgetData->hei_name = 'Cebu Technological University - Main Campus';
             $budgetData->academic_year = '2022-2023';
             $budgetData->user_id = auth()->id();
             
@@ -462,7 +462,7 @@ class ReportController extends Controller
     public function exportFormE($format)
     {
         $budget = BudgetExpenditure::first();
-        $hei_name = 'Cebu Technological University - Consolacion Campus';
+        $hei_name = 'Cebu Technological University - Main Campus';
 
         if ($format === 'pdf') {
             $pdf = Pdf::loadView('reports.formE-pdf', [
@@ -518,7 +518,7 @@ class ReportController extends Controller
 
     public function exportFormB($format)
     {
-        $hei_name = 'Cebu Technological University - Consolacion Campus';
+        $hei_name = 'Cebu Technological University - Main Campus';
 
         // Fetch all sports
         $sports = Sport::all();
@@ -573,7 +573,7 @@ class ReportController extends Controller
 
     public function exportFormC($format)
     {
-        $hei_name = 'Cebu Technological University - Consolacion Campus';
+        $hei_name = 'Cebu Technological University - Main Campus';
 
         // Fetch all athletes with their sport relationship
         $athletes = Athlete::with('sport')->get();

@@ -31,7 +31,7 @@ class FormCExport implements WithEvents, ShouldAutoSize
                 // ----------------------------
                 // Main header and subtitle
                 // ----------------------------
-                $sheet->setCellValue('G1', 'Cebu Technological University - Consolacion Campus');
+                $sheet->setCellValue('G1', 'Cebu Technological University - Main Campus');
                 $sheet->mergeCells('G1:U1');
                 $sheet->getStyle('G1')->getFont()->setBold(true)->setSize(14);
                 $sheet->getStyle('G1')->getAlignment()

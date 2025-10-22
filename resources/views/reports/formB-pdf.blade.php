@@ -55,7 +55,7 @@
         <tr>
             <td style="width: 15%;"><img src="{{ public_path('images/ctu-logo.png') }}" class="logo"></td>
             <td style="width: 70%; text-align: center;">
-                <h2>Cebu Technological University - Consolacion Campus</h2>
+                <h2>Cebu Technological University - Main Campus</h2>
                 <h3>Form B – Sports Programs Report</h3>
             </td>
             <td style="width: 15%;"><img src="{{ public_path('images/ched-logo.png') }}" class="logo"></td>

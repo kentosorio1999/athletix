@@ -17,7 +17,7 @@
                 <img src="{{ public_path('images/ctu-logo.png') }}" style="width:80px;">
             </td>
             <td style="width:60%; text-align:center;">
-                <h3>Cebu Technological University - Consolacion Campus</h3>
+                <h3>Cebu Technological University - Main Campus</h3>
                 <h4>CHED Form G: Feedback</h4>
             </td>
             <td style="width:20%; text-align:right;">

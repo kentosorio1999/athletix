@@ -24,7 +24,7 @@
         <img src="{{ public_path('images/ched-logo.png') }}" alt="CHED Logo">
     </div>
 
-    <div class="header">Cebu Technological University - Consolacion Campus</div>
+    <div class="header">Cebu Technological University - Main Campus</div>
     <div class="subtitle">Form F – Non-Varsity School-Based Sports Organizations</div>
 
     <table>

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Athlete extends Model
 {
     use HasFactory;
-
+    protected $table = 'athletes';
     protected $primaryKey = 'athlete_id';
     protected $fillable = [
         'full_name', 'age', 'profile_url', 'birthdate', 'gender', 'academic_course',

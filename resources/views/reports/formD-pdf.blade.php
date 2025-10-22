@@ -21,7 +21,7 @@
         <tr>
             <td><img src="{{ public_path('images/ctu-logo.png') }}" class="logo"></td>
             <td class="header">
-                <div class="main-title">Cebu Technological University - Consolacion Campus</div>
+                <div class="main-title">Cebu Technological University - Main Campus</div>
                 <div class="subtitle">Form D – Sports Personnel Report</div>
             </td>
             <td><img src="{{ public_path('images/ched-logo.png') }}" class="logo"></td>

@@ -41,7 +41,7 @@ class Feedback extends Model
             if (auth()->check()) {
                 $model->user_id = auth()->id();
             }
-            $model->hei_name = $model->hei_name ?? 'Cebu Technological University - Consolacion Campus';
+            $model->hei_name = $model->hei_name ?? 'Cebu Technological University - Main Campus';
             $model->academic_year = $model->academic_year ?? '2022-2023';
             $model->submitted_at = $model->submitted_at ?? now();
         });

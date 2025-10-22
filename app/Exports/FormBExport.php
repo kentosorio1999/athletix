@@ -31,7 +31,7 @@ class FormBExport implements WithEvents, ShouldAutoSize
                 // ----------------------------
                 // Main header and subtitle
                 // ----------------------------
-                $sheet->setCellValue('H1', 'Cebu Technological University - Consolacion Campus');
+                $sheet->setCellValue('H1', 'Cebu Technological University - Main Campus');
                 $sheet->mergeCells('H1:O1');
                 $sheet->getStyle('H1')->getFont()->setBold(true)->setSize(14);
                 $sheet->getStyle('H1')->getAlignment()

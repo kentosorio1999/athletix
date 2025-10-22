@@ -59,7 +59,6 @@
                           <label>Role</label>
                           <select name="role" class="w-full mb-2 p-2 border rounded">
                             <option value="SuperAdmin" @if($user->role=='SuperAdmin') selected @endif>SuperAdmin</option>
-                            <option value="Admin" @if($user->role=='Admin') selected @endif>Admin</option>
                             <option value="Coach" @if($user->role=='Coach') selected @endif>Coach</option>
                             <option value="Staff" @if($user->role=='Staff') selected @endif>Staff</option>
                             <option value="Athlete" @if($user->role=='Athlete') selected @endif>Athlete</option>
@@ -524,7 +523,6 @@
             <label>Role</label>
             <select name="role" class="w-full mb-2 p-2 border rounded">
                 <option value="SuperAdmin">SuperAdmin</option>
-                <option value="Admin">Admin</option>
                 <option value="Coach">Coach</option>
                 <option value="Staff">Staff</option>
                 <option value="Athlete">Athlete</option>
