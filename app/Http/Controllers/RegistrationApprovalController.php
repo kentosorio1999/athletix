@@ -40,7 +40,7 @@ class RegistrationApprovalController extends Controller
     }
 
     // Approve athlete registration
-    public function approve($id)
+    public function approve(Request $request, $id)
     {
         $athlete = Athlete::findOrFail($id);
         $athlete->status = 'approved';
@@ -49,9 +49,9 @@ class RegistrationApprovalController extends Controller
                 // Save a notification for the athlete
         Notification::create([
             'title' => 'Registration Approved',
-            'message' => $request->reason,
-            'type' => 'error',
-            'user_id' => $athlete->user_id, // 👈 notify athlete’s user account
+            'message' => $request->reason ?? 'Your registration has been approved successfully.',
+            'type' => 'success',
+            'user_id' => $athlete->user_id,
         ]);
 
         // Audit log
