@@ -96,18 +96,25 @@ class Athlete extends Model
 
     public function getProfileUrlAttribute($value)
     {
-        if ($value) {
+        // If value is empty, return gender-based default image
+        if (empty($value)) {
+            switch (strtolower($this->gender)) {
+                case 'male':
+                    return asset('images/default_male.jpg');
+                case 'female':
+                    return asset('images/default_female.jfif');
+                default:
+                    return asset('images/default_neutral.webp');
+            }
+        }
+
+        // If already a full URL (starts with http), return it directly
+        if (str_starts_with($value, 'http')) {
             return $value;
         }
 
-        switch (strtolower($this->gender)) {
-            case 'male':
-                return asset('images/default_male.jpg');
-            case 'female':
-                return asset('images/default_female.jfif');
-            default:
-                return asset('images/default_neutral.webp');
-        }
+        // Otherwise assume it's a relative path stored in 'storage'
+        return asset('storage/' . $value);
     }
 
     // ✅ Corrected helper methods

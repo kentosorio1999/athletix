@@ -10,7 +10,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('athlete.profile.update') }}" class="space-y-6">
+    <form method="POST" action="{{ route('athlete.profile.update') }}"  enctype="multipart/form-data" class="space-y-6">
         @csrf
         @method('PATCH')
 
@@ -54,6 +54,19 @@
                     <input type="text" name="full_name" value="{{ old('full_name', $athlete?->full_name) }}"
                         class="w-full border rounded p-2">
                     @error('full_name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="mb-3">
+                    <label for="profile_image">Profile Image</label><br>
+                    @if(isset($athlete) && $athlete->profile_url)
+                        <img src="{{ $athlete->profile_url }}" 
+                            alt="{{ $athlete->full_name }}" width="100" height="100" class="mb-2 rounded">
+                        <br>
+                    @endif
+                    <input type="file" name="profile_image" id="profile_image" class="form-control" accept="image/*"
+                        onchange="previewImage(event)">
+                    <img id="preview" src="{{ asset('storage/'.$athlete->profile_image) }}" 
+                        alt="Profile Image" width="100" height="100" class="mt-2 rounded">
                 </div>
 
                 <!-- Birthdate -->
@@ -302,7 +315,7 @@
                         <label class="flex items-center">
                             <input type="checkbox" name="playing_uniforms_sponsorship" value="1"
                                 {{ old('playing_uniforms_sponsorship', $athlete?->playing_uniforms_sponsorship) ? 'checked' : '' }}
-                                class="mr-2">
+                                class="mr-2">s
                             Playing Uniforms
                         </label>
                         <label class="flex items-center">
@@ -349,4 +362,11 @@
         </div>
     </form>
 </div>
+<script>
+function previewImage(event) {
+    const output = document.getElementById('preview');
+    output.src = URL.createObjectURL(event.target.files[0]);
+    output.onload = () => URL.revokeObjectURL(output.src); // free memory
+}
+</script>
 @endsection
